@@ -1,0 +1,8 @@
+{
+  "name": "실제소유자 판별기",
+  "short_name": "AML판별기",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5"
+}
