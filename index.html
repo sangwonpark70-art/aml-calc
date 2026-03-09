@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>실제소유자 판별기 V60_아이폰용 (Offline One-Tab Print)</title>
+    <title>실제소유자 판별기 V67 (iPhone PWA)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,140 +16,76 @@
         });
       }
     </script>
+    
     <style>
-        /* [기본 설정] */
-        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        :root { --primary: #4f46e5; --bg-color: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text-main: #1e293b; --text-sub: #64748b; --warn: #ef4444; }
+        /* [V67 완벽 여백 및 모바일 최적화 CSS 원본 그대로] */
+        body { -webkit-user-select: none; user-select: none; }
+        :root { --primary: #4f46e5; --bg-color: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text-main: #1e293b; --text-sub: #64748b; }
         * { box-sizing: border-box; }
         
-        body { 
-            font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", helvetica, sans-serif; 
-            background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; display: flex; justify-content: center; line-height: 1.5; letter-spacing: -0.02em; 
-        }
+        body { font-family: "Pretendard", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; display: flex; justify-content: center; line-height: 1.5; }
         
-        .container { width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+        .container { width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; padding: 5px; } }
         
         .header { grid-column: span 2; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         @media (max-width: 900px) { .header { grid-column: span 1; flex-direction: column; align-items: flex-start; gap: 10px; } }
 
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; position: relative; }
-        .title { font-size: 22px; font-weight: 800; color: var(--primary); letter-spacing: -0.03em; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; }
+        .title { font-size: 22px; font-weight: 800; color: var(--primary); }
         
-        /* 상단 버튼 그룹 */
-        .header-btns { display: flex; gap: 8px; }
-        .action-btn { background: #fff; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; color: #475569; font-size: 12px; transition: 0.2s; font-family: inherit; display: flex; align-items: center; gap: 4px; }
-        .action-btn:hover { background: #f1f5f9; color: #1e293b; border-color: #94a3b8; }
+        .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .action-btn { background: #fff; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; color: #475569; font-size: 13px; transition: 0.2s; display: flex; align-items: center; gap: 4px; }
+        .action-btn:hover { background: #f1f5f9; color: #1e293b; }
         
         .mode-switch { display: flex; background: #f1f5f9; padding: 3px; border-radius: 8px; width: 140px; height: 34px; border: 1px solid #e2e8f0; }
-        .mode-btn { flex: 1; border: none; background: transparent; padding: 0; border-radius: 4px; font-weight: 700; font-size: 12px; color: #64748b; cursor: pointer; transition: all 0.2s; height: 100%; display: flex; align-items: center; justify-content: center; font-family: inherit; }
-        .mode-btn.active.shares { background: #3b82f6; color: #fff; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2); } 
-        .mode-btn.active.ratio { background: #10b981; color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); } 
+        .mode-btn { flex: 1; border: none; background: transparent; border-radius: 4px; font-weight: 700; font-size: 12px; color: #64748b; cursor: pointer; transition: 0.2s; }
+        .mode-btn.active.shares { background: #3b82f6; color: #fff; } 
+        .mode-btn.active.ratio { background: #10b981; color: #fff; } 
         
-        label { font-size: 13px; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 6px; transition: color 0.3s; }
-        
-        input[type="text"], select { width: 100%; padding: 0 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #fff; transition: all 0.2s; font-family: inherit; }
+        label { font-size: 13px; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 6px; }
+        input[type="text"], select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
         input[type="text"]:focus, select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         .input-group { margin-bottom: 15px; }
 
-        input.error-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #b91c1c !important; }
-        
         .highlight-shares label { color: #2563eb !important; } 
         .highlight-shares input { border-color: #bfdbfe !important; background-color: #eff6ff !important; color: #1e3a8a !important; font-weight: 700; }
         .highlight-ratio label { color: #059669 !important; } 
         .highlight-ratio input { border-color: #a7f3d0 !important; background-color: #ecfdf5 !important; color: #064e3b !important; font-weight: 700; }
 
-        #bizNumInput, #targetName, #totalShares, .minus-input { height: 34px !important; box-sizing: border-box; font-weight: 500; color: #1e293b; }
-
-        #totalShares, .minus-input, .row-shares { 
-            font-variant-numeric: tabular-nums; letter-spacing: 0; font-family: inherit; font-weight: 500; color: #1e293b; 
-            -moz-appearance: textfield; 
-        }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-        #totalShares { min-width: 120px; padding-right: 10px; text-align: right; }
-
+        #totalShares, .row-shares { font-variant-numeric: tabular-nums; font-weight: 500; color: #1e293b; text-align: right; }
         .minus-group { margin-top: 6px; padding: 8px 12px; background: #fff1f2; border-radius: 8px; border: 1px solid #fecdd3; display: flex; justify-content: space-between; align-items: center; }
-        .minus-label { font-size: 12px; color: #e11d48; font-weight: 700; }
         .minus-input { width: 100px !important; padding: 0 8px !important; text-align: right; border: 1px solid #fda4af !important; color: #e11d48 !important; height: 30px; }
-        .calc-info { font-size: 11px; color: #4f46e5; text-align: right; margin-top: 5px; font-weight: 700; }
-
-        #validationBox { 
-            display: none; margin-bottom: 15px; padding: 10px; border-radius: 8px; 
-            background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 12px; font-weight: 700; 
-            line-height: 1.4;
-        }
-
+        
         #treeContainer { width: 100%; display: block; }
+        .tree-row { background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; position: relative; transition: 0.2s; }
+        .child-row { background-color: #f8fafc; border-left: 4px solid #94a3b8; margin-left: 20px; }
         
-        .tree-row { 
-            display: flex; flex-wrap: nowrap; align-items: center; gap: 5px; 
-            margin-bottom: 8px; position: relative; 
-            background: #fff; padding: 6px; border-radius: 8px; border: 1px solid #e2e8f0; 
-            transition: box-shadow 0.2s, border-color 0.2s; 
-        }
-        .tree-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-
-        .child-row {
-            background-color: #f8fafc !important; 
-            border-left: 4px solid #94a3b8 !important; 
-            margin-left: 20px; 
-        }
-        .tree-line { 
-            position: absolute; left: -18px; top: -14px; width: 18px; height: 46px; 
-            border-left: 2px dashed #94a3b8; 
-            border-bottom: 2px dashed #94a3b8; 
-            border-bottom-left-radius: 8px; pointer-events: none; 
-        }
+        .node-inputs-wrapper { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
+        .row-select { flex: 0 0 75px; height: 36px; padding: 0 4px; font-size: 12px; }
+        .row-name { flex: 1 1 80px; height: 36px; }
+        .spinner-wrapper { flex: 1 1 100px; display: flex; align-items: center; height: 36px; }
+        .row-shares { width: 100%; height: 100%; padding-right: 5px; }
+        .unit-text { font-size: 11px; color: #94a3b8; width: 15px; text-align: center; margin-left: 4px; flex-shrink: 0; }
         
-        .corp-settings {
-            width: 100%; padding: 8px; margin-top: 6px; 
-            background: #eff6ff; 
-            border: 1px solid #bfdbfe; border-radius: 6px; 
-            font-size: 12px; display: flex; align-items: center; gap: 6px;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
-        }
-        .corp-settings strong { color: #1e40af; }
+        .btn-controls { display: flex; gap: 6px; align-items: center; flex: 0 0 auto; margin-left: auto; }
+        .btn-rep { border: 1px solid #cbd5e1; background: #fff; color: #94a3b8; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; }
+        .btn-rep.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+        .btn-del { border: none; background: transparent; color: #ef4444; font-weight: 800; cursor: pointer; font-size: 20px; padding: 4px; }
+        .icon-btn { border: none; background: transparent; cursor: pointer; font-size: 16px; color: #10b981; padding: 4px; }
 
-        .row-select, .row-name, .row-shares, .btn-rep { height: 34px !important; box-sizing: border-box; vertical-align: middle; }
-
-        select.row-select { width: 68px; padding: 0 4px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; background: #fff; cursor: pointer; flex-shrink: 0; color: #334155; font-weight: 600; }
-        .row-name { flex: 1; min-width: 50px; padding: 4px 10px; font-size: 13px; border: 1px solid #e2e8f0; border-radius: 6px; outline: none; color: #1e293b; font-weight: 500; }
-        .row-name:focus { border-color: #4f46e5; }
-
-        .spinner-wrapper { position: relative; width: 115px; flex-shrink: 0; height: 34px; }
-        .row-shares { 
-            width: 100%; padding: 4px 10px 4px 8px; 
-            text-align: right; font-size: 13px; 
-            border: 1px solid #e2e8f0; border-radius: 6px; outline: none; font-weight: 500;
-        }
-        .row-shares:focus { border-color: #4f46e5; }
+        .corp-settings { width: 100%; padding: 8px; margin-top: 8px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+        .btn-add { width: 100%; padding: 12px; border: 2px dashed #cbd5e1; background: #f8fafc; color: #64748b; font-weight: 700; cursor: pointer; border-radius: 8px; margin-top: 10px; display: block; text-align: center; font-size: 13px; }
         
-        .spinner-btns { display: none !important; }
-        
-        .unit-text { font-size: 11px; color: #94a3b8; width: 15px; text-align: center; flex-shrink: 0; margin-top: 2px; }
-        
-        .btn-rep { flex-shrink: 0; border: 1px solid #cbd5e1; background: #fff; color: #94a3b8; padding: 0 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; white-space: nowrap; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-rep:hover { border-color: #64748b; color: #64748b; background: #f8fafc; }
-        .btn-rep.active { background: #4f46e5; color: #fff; border-color: #4f46e5; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3); }
-        
-        .btn-del { border: none; background: transparent; color: #ef4444; font-weight: 800; cursor: pointer; font-size: 16px; padding: 0 6px; flex-shrink: 0; opacity: 0.6; transition: 0.2s; }
-        .btn-del:hover { opacity: 1; transform: scale(1.1); }
-        .icon-btn { border: none; background: transparent; cursor: pointer; font-size: 16px; color: #10b981; padding: 0 4px; flex-shrink: 0; opacity: 0.8; transition: 0.2s; }
-        .icon-btn:hover { opacity: 1; transform: scale(1.1); }
-
-        .btn-add { width: 100%; padding: 12px; border: 2px dashed #cbd5e1; background: #f8fafc; color: #64748b; font-weight: 700; cursor: pointer; border-radius: 8px; margin-top: 10px; display: block; text-align: center; transition: 0.2s; font-size: 13px; }
-        .btn-add:hover { background: #eef2ff; color: #4338ca; border-color: #4338ca; }
-
         .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         .step-badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 800; background: #f1f5f9; color: #64748b; }
         .chart-box { display: flex; gap: 20px; align-items: center; margin-bottom: 25px; justify-content: center; }
         .legend { flex: 1; max-height: 140px; overflow-y: auto; font-size: 12px; }
         
-        .type-box { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; opacity: 0.5; transition: 0.2s; }
-        .type-box.active { opacity: 1; border: 2px solid #4f46e5; box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.15); transform: scale(1.01); z-index: 1; }
+        .type-box { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; opacity: 0.5; }
+        .type-box.active { opacity: 1; border: 2px solid #4f46e5; box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.15); }
         .type-badge { font-size: 13px; font-weight: 800; padding: 6px 10px; border-radius: 6px; min-width: 75px; text-align: center; }
-        .type-text { font-size: 12px; color: #475569; line-height: 1.4; flex: 1; }
+        .type-text { font-size: 12px; color: #475569; flex: 1; }
         .type-text strong { display: block; font-size: 13px; color: #1e293b; margin-bottom: 3px; font-weight: 700; }
 
         .badge-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
@@ -157,110 +93,30 @@
         .badge-yellow { background: #fefce8; color: #854d0e; border: 1px solid #fde047; }
         .badge-white { background: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; }
 
-        .form-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
-        .section-title { font-size: 13px; font-weight: 800; color: #334155; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-        
-        .result-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; background: #fff; table-layout: fixed; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .result-table th { background: #f8fafc; padding: 10px 2px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 700; }
-        .result-table td { padding: 6px 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; text-align: center; vertical-align: middle; }
-        .tbl-sub { display: block; font-size: 10px; color: #94a3b8; margin-top: 2px; font-weight: 500; }
-        .tbl-input { width: 100%; border: none; background: transparent; text-align: center; font-size: 12px; padding: 4px; outline: none; font-weight: 500; }
-        .tbl-input:focus { background: #eef2ff; border-radius: 4px; }
-        .tbl-input.default-val { color: #cbd5e1; }
-        .tbl-input.edited { color: #1e293b; font-weight: 700; }
-        .req-mark { color: #ef4444; font-weight: bold; margin-left: 2px; }
+        .result-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; text-align: center; vertical-align: middle; }
         
-        .note-yellow-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; border-radius: 8px; font-size: 12px; font-weight: 600; line-height: 1.5; margin-top: 15px; }
-
-        .doc-box { margin-top: 20px; border-top: 2px dashed #e2e8f0; padding-top: 20px; }
-        .doc-title { font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-        .doc-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: #334155; line-height: 1.6; }
-        .doc-list li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-        .doc-list li::before { content: "📄"; font-size: 12px; margin-top: 3px; }
-        .doc-highlight { color: #b91c1c; font-weight: 700; background: #fef2f2; padding: 0 4px; border-radius: 3px; }
-        .doc-note-yellow { margin-top: 15px; background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; font-size: 12px; border-radius: 8px; font-weight: 600; line-height: 1.5; }
-
-        .nonprofit-note { color: #64748b; font-size: 11px; margin-top: 3px; font-weight: 500; }
-
-        .type-select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; margin-bottom: 10px; font-weight: bold; color: #1e293b; background: #fff; }
+        .tbl-input { width: 100%; border: 1px solid transparent; background: transparent; text-align: center; font-size: 12px; padding: 6px 2px; outline: none; transition: 0.2s; border-radius: 4px; }
+        .tbl-input.editable { border: 1px dashed #cbd5e1; background: #f8fafc; cursor: text; }
+        .tbl-input.editable:focus { border: 1px solid #4f46e5; background: #fff; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
+        
         .hidden { display: none !important; }
-        
-        /* 인쇄할 때는 스위치(자동보정버튼)를 화면에서 숨김 */
-        .hide-on-print { display: flex; }
 
-        .footer { grid-column: span 2; text-align: center; margin-top: 40px; font-size: 11px; color: #cbd5e1; border-top: 1px dashed #e2e8f0; padding-top: 20px; }
-        @media (max-width: 900px) { .footer { grid-column: span 1; } }
-
-        @media (max-width: 600px) {
-            .container { padding: 10px; gap: 15px; }
-            .tree-row { padding: 6px 2px; gap: 3px; }
-            select.row-select { width: 45px !important; font-size: 11px; padding: 0; text-align: center; }
-            .spinner-wrapper { width: 70px !important; }
-            .row-shares { padding-right: 4px !important; } 
-            .unit-text { font-size: 10px; width: 10px; }
-            .btn-rep { padding: 0 6px; font-size: 11px; height: 34px; }
-            .btn-del { font-size: 16px; padding: 0 2px; }
-            .row-name { flex-grow: 1; min-width: 30px; width: auto; }
-            .minus-input { width: 80px !important; }
-        }
-
-        /* ------------------------------------------------------------------------ */
-        /* 인쇄 전용 스타일 (오프라인 One-Tab 인쇄 핵심 로직) */
-        /* 아이폰에서 출력 버튼을 누르는 순간 화면이 문서처럼 깔끔하게 변경됩니다. */
-        /* ------------------------------------------------------------------------ */
-        @media print {
-            body { background: #fff; padding: 0; color: #000; font-size: 12px; }
-            .container { display: block; max-width: 100%; gap: 0; padding: 0; }
-            
-            .print-col-left { break-after: page; page-break-after: always; }
-            .print-col-right { break-before: page; page-break-before: always; margin-top: 20px; }
-            
-            /* 스위치 및 불필요 버튼, UI 요소 완벽 숨김 */
-            .header-btns, .btn-add, .btn-del, .icon-btn, .reset-btn, .footer, .mode-switch, .hide-on-print { display: none !important; }
-            
-            .btn-rep:not(.active) { display: none !important; }
-            .btn-rep.active { 
-                display: inline-flex !important; background: #f1f5f9 !important; color: #1e293b !important; 
-                border: 1px solid #cbd5e1 !important; box-shadow: none !important; padding: 2px 6px !important; height: auto !important; 
-            }
-            
-            .card { border: none; box-shadow: none; margin-bottom: 10px; padding: 0 0 15px 0; break-inside: avoid; }
-            .header { margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-            
-            input[type="text"], select { 
-                border: none !important; background: transparent !important; padding: 0 !important; 
-                color: #000 !important; font-weight: bold; appearance: none; -webkit-appearance: none; box-shadow: none !important; 
-            }
-            
-            .input-group { margin-bottom: 8px; display: flex; align-items: center; border-bottom: 1px dotted #ccc; padding-bottom: 4px; }
-            .input-group label { width: 160px; margin: 0; color: #000 !important; flex-shrink: 0; }
-            
-            .type-box:not(.active) { display: none !important; }
-            .type-box.active { border: 2px solid #000 !important; background: #f8fafc !important; opacity: 1 !important; transform: none !important; margin-bottom: 15px; page-break-inside: avoid; }
-            
-            .result-table { border: 2px solid #000; }
-            .result-table th { background: #f0f0f0 !important; color: #000 !important; border: 1px solid #000; }
-            .result-table td { border: 1px solid #000; padding: 4px; }
-            
-            #treeContainer { margin-top: 10px; }
-            .tree-row { border: none !important; padding: 4px 0; margin-bottom: 2px; border-bottom: 1px solid #eee; background: transparent !important; }
-            .child-row { border-left: 2px solid #64748b !important; margin-left: 15px; }
-            
-            .chart-box { align-items: center; justify-content: flex-start; margin-bottom: 15px; }
-            #mainChart { max-width: 120px; max-height: 120px; }
-            
-            .title::after { content: " (인쇄용 보고서)"; font-size: 16px; font-weight: normal; color: #64748b; margin-left: 10px; }
-        }
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
 
     <div class="container">
         <div class="header">
-            <div class="title">🏢 실제소유자 판별기 V60_아이폰용</div>
+            <div class="title">🏢 실제소유자 판별기 V67 <span style="font-size:12px; color:#64748b; font-weight:normal;">(iPhone PWA)</span></div>
             <div class="header-btns">
-                <button class="action-btn" onclick="window.print()" style="color: #4f46e5; border-color: #c7d2fe;">
-                    🖨️ 인쇄 / PDF 저장 (아이폰 호환)
+                <button class="action-btn" onclick="triggerOfficialPrint()" style="color: #059669; border-color: #a7f3d0; background:#ecfdf5;">
+                    📜 서식양식 인쇄 (1장)
+                </button>
+                <button class="action-btn" onclick="triggerPrint()" style="color: #4f46e5; border-color: #c7d2fe;">
+                    🖨️ 보고서 인쇄 (2장)
                 </button>
                 <button class="action-btn" onclick="initApp()">🔄 초기화</button>
             </div>
@@ -269,7 +125,7 @@
         <div class="print-col-left">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <h3 style="margin:0; font-size:15px; font-weight:700; display:flex; align-items:center;">1️⃣ 기본 정보</h3>
+                    <h3 style="margin:0; font-size:15px; font-weight:700;">1️⃣ 기본 정보</h3>
                     <div class="mode-switch">
                         <button class="mode-btn active shares" id="btnShares" onclick="setMode('shares')">주식수</button>
                         <button class="mode-btn" id="btnRatio" onclick="setMode('ratio')">지분율</button>
@@ -277,13 +133,8 @@
                 </div>
                 
                 <div class="input-group">
-                    <label>사업자등록번호 (선택)</label>
-                    <input type="text" id="bizNumInput" placeholder="000-00-00000" maxlength="12" oninput="onBizNumInput(this)">
-                </div>
-
-                <div class="input-group">
                     <label>법인단체 유형</label>
-                    <select id="entityType" onchange="changeEntityType(this.value)" class="type-select" style="width:100%; padding:10px;">
+                    <select id="entityType" onchange="changeEntityType(this.value)" style="font-weight:bold;">
                         <option value="profit" selected>일반 영리법인 (주식회사 등)</option>
                         <option value="nonprofit">비영리법인/단체 (종교, 임의단체 등)</option>
                         <option value="exempt">확인 면제 대상 (상장사, 공공기관 등)</option>
@@ -305,23 +156,12 @@
                         <span class="minus-label">(-) 의결권 없는 주식</span>
                         <input type="text" id="treasuryShares" value="0" class="minus-input" oninput="onTreasuryInput(this)">
                     </div>
-                    <div id="votingSharesDisplay" class="calc-info">
-                        = 의결권 있는 주식수: 10,000주
-                    </div>
                 </div>
             </div>
 
             <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="margin:0; font-size:15px; font-weight:700;" id="inputSectionTitle">2️⃣ 주주 구성</h3>
-                </div>
-
-                <div id="infoMsg" class="hidden" style="background:#f0f9ff; border:1px solid #bae6fd; color:#0369a1; padding:12px; border-radius:8px; font-size:13px; margin-bottom:15px; line-height:1.4;"></div>
-                
-                <div id="validationBox"></div>
-
+                <h3 style="margin:0 0 15px 0; font-size:15px; font-weight:700;">2️⃣ 주주 구성 입력</h3>
                 <div id="treeContainer"></div>
-                
                 <button class="btn-add" id="btnAddShareholder" onclick="addRoot()">+ 1차 주주 추가</button>
                 <button class="btn-add hidden" id="btnAddRep" onclick="addRepDirect()">+ 대표자(임원) 추가</button>
             </div>
@@ -337,8 +177,8 @@
                 </div>
 
                 <div class="chart-box" id="chartBox">
-                    <div style="position:relative; width:140px; height:140px;">
-                        <canvas id="mainChart" width="140" height="140"></canvas>
+                    <div style="position:relative; width:130px; height:130px;">
+                        <canvas id="mainChart" width="130" height="130"></canvas>
                         <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
                             <div style="font-size:9px; color:#94a3b8; font-weight:600;">TOTAL</div>
                             <div id="chartTotal" style="font-size:16px; font-weight:800; color:#1e293b;">0%</div>
@@ -347,328 +187,151 @@
                     <div class="legend" id="chartLegend"></div>
                 </div>
 
-                <div class="form-section">
-                    <div class="section-title">
-                        <span>☑️ 실제소유자 유형 선택 (자동 판별)</span>
-                    </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px; margin-bottom:10px;">
+                    <h4 style="margin:0 0 10px 0; font-size:13px; color:#334155;">☑️ 실제소유자 유형 (자동 판별)</h4>
                     <div id="typeArea">
-                        <div class="type-box" id="box-type1">
-                            <div class="type-badge badge-blue">2-(1)</div>
-                            <div class="type-text"><strong>25% 이상 지분 소유</strong></div>
-                        </div>
-                        <div class="type-box" id="box-type2">
-                            <div class="type-badge badge-green">2-(2)-②</div>
-                            <div class="type-text"><strong>최대 지분 소유자</strong></div>
-                        </div>
-                        <div class="type-box" id="box-type3">
-                            <div class="type-badge badge-yellow">2-(2)-③</div>
-                            <div class="type-text"><strong>법인의 대표이사</strong></div>
-                        </div>
-                        <div class="type-box" id="box-type4">
-                            <div class="type-badge badge-white">(3)</div>
-                            <div class="type-text">
-                                <strong>법인 또는 단체의 대표자 1인</strong>
-                                <div class="nonprofit-note">*비영리법인만 해당</div>
-                            </div>
-                        </div>
+                        <div class="type-box" id="box-type1"><div class="type-badge badge-blue">2-(1)</div><div class="type-text"><strong>25% 이상 지분 소유</strong></div></div>
+                        <div class="type-box" id="box-type2"><div class="type-badge badge-green">2-(2)-②</div><div class="type-text"><strong>최대 지분 소유자</strong></div></div>
+                        <div class="type-box" id="box-type3"><div class="type-badge badge-yellow">2-(2)-③</div><div class="type-text"><strong>법인의 대표이사</strong></div></div>
+                        <div class="type-box" id="box-type4"><div class="type-badge badge-white">(3)</div><div class="type-text"><strong>법인/단체의 대표자 1인</strong></div></div>
                     </div>
-                    <div id="tieAlert" style="display:none; background:#fef2f2; color:#b91c1c; font-size:12px; padding:10px; border-radius:6px; margin:10px 0; font-weight:700; text-align:center; border:1px solid #fecaca;">
-                        ⚠️ 지분 동률! 대표자(대표)를 선택하세요.
-                    </div>
-
+                    
                     <div style="margin-top:20px;">
-                        <div class="hide-on-print" style="justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
-                            <div style="font-size:13px; font-weight:800; color:#1e293b;">📝 실제소유자 기재 명단</div>
-                            <label style="display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#4338ca; font-weight:700; background:#eef2ff; padding:4px 8px; border-radius:6px; border:1px solid #c7d2fe; transition:0.2s;">
-                                <input type="checkbox" id="autoFillSwitch" onchange="calc()" style="width:14px; height:14px; cursor:pointer; margin:0;">
-                                50% 기재요건 맞추기 ('외' 보정)
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <strong style="font-size:13px; color:#1e293b;">📝 기재 명단 및 데이터 추가 입력</strong>
+                            <label style="display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#4338ca; font-weight:700; background:#eef2ff; padding:6px 10px; border-radius:6px; border:1px solid #c7d2fe;">
+                                <input type="checkbox" id="autoFillSwitch" onchange="calc()" style="width:14px; height:14px; margin:0;">
+                                50% 요건 보정 ('외' 처리)
                             </label>
                         </div>
-
+                        <div style="font-size:11px; color:#ef4444; margin-bottom:8px;">※ 영문명, 생년월일, 국적은 아래 칸을 클릭하여 직접 수정하세요.</div>
                         <table class="result-table">
-                            <colgroup>
-                                <col style="width:22%">
-                                <col style="width:30%">
-                                <col style="width:16%">
-                                <col style="width:16%">
-                                <col style="width:16%">
-                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th>성명<span class="req-mark">*</span></th>
-                                    <th>영문명<span class="req-mark">*</span></th>
-                                    <th>생년월일<span class="req-mark">*</span></th>
-                                    <th>국적<span class="req-mark">*</span></th>
-                                    <th>지분율</th>
+                                    <th style="width:18%;">성명</th>
+                                    <th style="width:28%;">영문명</th>
+                                    <th style="width:22%;">생년월일</th>
+                                    <th style="width:17%;">국적</th>
+                                    <th style="width:15%;">지분율</th>
                                 </tr>
                             </thead>
                             <tbody id="resultBody"></tbody>
                         </table>
-                        <div class="note-yellow-box">
-                            ※ 2-(1) 또는 2-(2)-② 유형은 보유지분 총합이 50% 이상 충족될 때까지 기재해야 합니다.<br>
-                            (입력 후 50%가 안 될 경우, 위 <strong>[50% 기재요건 맞추기]</strong> 버튼을 켜주세요.)
-                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="card" style="background:#f8fafc; border:1px solid #cbd5e1;">
-                <div class="doc-title">📂 필수 제출 서류 (안내)</div>
-                <div id="docListContainer"></div>
-                <div class="doc-note-yellow">
-                    💡 <strong>3개월 경과 서류 처리:</strong><br>
-                    발급이 3개월 지난 서류는 <strong>명판(회사명), 현재날짜기재, 직인 날인</strong>시 인정 가능합니다. (내부 기준)
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            Copyright © 2026. All rights reserved. | 무단 복제 및 배포 금지
         </div>
     </div>
 
     <script>
-        window.onload = function() { 
-            initApp();
-        };
+        window.onload = function() { initApp(); };
 
         let shareholders = [];
         let rootMode = 'shares'; 
         let currentType = 'profit'; 
-
-        const DOCS = {
-            profit: `
-                <ul class="doc-list">
-                    <li>사업자등록증 사본</li>
-                    <li>법인 등기부등본 (말소사항 포함) <span class="doc-highlight">(3개월 내)</span></li>
-                    <li><span class="doc-highlight">주주명부</span> (실제소유자 확인용 필수) <span class="doc-highlight">(3개월 내)</span></li>
-                    <li>실제소유자 확인서 (판별 결과 기재)</li>
-                </ul>
-            `,
-            nonprofit: `
-                <ul class="doc-list">
-                    <li>고유번호증 (또는 사업자등록증)</li>
-                    <li>등기부등본 또는 정관<br>(설립목적 및 대표권 확인용) 등 설립서류</li>
-                    <li>실제소유자확인서 유형은<br><span class="doc-highlight">(3) 법인 또는 단체의 대표자 1인</span> 으로 체크</li>
-                </ul>
-            `,
-            exempt: `
-                <ul class="doc-list">
-                    <li>사업자등록증 사본</li>
-                    <li>법인 등기부등본</li>
-                    <li><span class="doc-highlight">분기보고서</span> (또는 DART 공시 화면 캡처)</li>
-                    <li style="color:#64748b; font-size:11px;">※ 상장사임을 증빙하여 실제소유자 확인 면제</li>
-                </ul>
-            `
-        };
+        let uboDetailsStore = {}; 
 
         function initApp() {
-            document.getElementById('bizNumInput').value = '';
             document.getElementById('entityType').value = 'profit';
             document.getElementById('targetName').value = '';
             document.getElementById('totalShares').value = '10,000';
             document.getElementById('treasuryShares').value = '0';
-            if (document.getElementById('autoFillSwitch')) document.getElementById('autoFillSwitch').checked = false; 
+            if (document.getElementById('autoFillSwitch')) document.getElementById('autoFillSwitch').checked = false;
             updateTargetDisplay();
-            
             setMode('shares');
             currentType = 'profit';
-            
             shareholders = [];
-            const tree = document.getElementById('treeContainer');
-            tree.innerHTML = ''; 
+            uboDetailsStore = {}; 
+            document.getElementById('treeContainer').innerHTML = ''; 
             addRoot(); addRoot(); addRoot(); addRoot(); 
-            
-            updateDocList('profit');
-            
             document.getElementById('totalSharesGroup').classList.remove('hidden');
             document.getElementById('btnAddShareholder').classList.remove('hidden');
             document.getElementById('btnAddRep').classList.add('hidden');
-            document.getElementById('infoMsg').classList.remove('hidden');
-            document.getElementById('infoMsg').innerHTML = "🏢 <strong>영리법인</strong>입니다.<br>지분율에 따라 <strong>2-(1), 2-(2)-②, 2-(2)-③</strong> 중 하나를 판별합니다.";
-            
             calc();
-        }
-
-        function updateDocList(type) {
-            const container = document.getElementById('docListContainer');
-            container.innerHTML = DOCS[type] || DOCS['profit'];
         }
 
         function setMode(m) {
             rootMode = m;
             document.getElementById('btnShares').className = m === 'shares' ? 'mode-btn active shares' : 'mode-btn';
             document.getElementById('btnRatio').className = m === 'ratio' ? 'mode-btn active ratio' : 'mode-btn';
-            
             const group = document.getElementById('totalSharesGroup');
             const targetGroup = document.getElementById('groupTargetName');
-            
             if(m === 'shares') { 
-                group.style.opacity = '1'; 
-                group.style.pointerEvents = 'auto'; 
-                group.classList.add('highlight-shares');
-                targetGroup.classList.add('highlight-shares');
-                group.classList.remove('highlight-ratio');
-                targetGroup.classList.remove('highlight-ratio');
+                group.style.opacity = '1'; group.style.pointerEvents = 'auto'; 
+                group.classList.add('highlight-shares'); targetGroup.classList.add('highlight-shares');
+                group.classList.remove('highlight-ratio'); targetGroup.classList.remove('highlight-ratio');
             } else { 
-                group.style.opacity = '0.5'; 
-                group.style.pointerEvents = 'none'; 
-                group.classList.add('highlight-ratio');
-                targetGroup.classList.add('highlight-ratio');
-                group.classList.remove('highlight-shares');
-                targetGroup.classList.remove('highlight-shares');
+                group.style.opacity = '0.5'; group.style.pointerEvents = 'none'; 
+                group.classList.add('highlight-ratio'); targetGroup.classList.add('highlight-ratio');
+                group.classList.remove('highlight-shares'); targetGroup.classList.remove('highlight-shares');
             }
             renderTree(); calc();
-        }
-
-        function onBizNumInput(input) {
-            let val = input.value.replace(/[^0-9]/g, '');
-            if(val.length > 3 && val.length <= 5) val = val.slice(0,3) + '-' + val.slice(3);
-            else if(val.length > 5) val = val.slice(0,3) + '-' + val.slice(3,5) + '-' + val.slice(5);
-            input.value = val;
-
-            const pureNums = val.replace(/-/g, '');
-            if(pureNums.length === 10) {
-                const mid = parseInt(pureNums.substring(3, 5));
-                let detectedType = 'profit';
-                if(mid === 83) detectedType = 'exempt';
-                else if(mid === 82 || mid === 80 || mid === 89) detectedType = 'nonprofit';
-                else detectedType = 'profit';
-
-                if(currentType !== detectedType) {
-                    document.getElementById('entityType').value = detectedType;
-                    changeEntityType(detectedType);
-                }
-            }
         }
 
         function changeEntityType(type) {
             currentType = type;
             shareholders = [];
-            updateDocList(type); 
-
             const shareGroup = document.getElementById('totalSharesGroup');
             const btnAddSh = document.getElementById('btnAddShareholder');
             const btnAddRep = document.getElementById('btnAddRep');
-            const tree = document.getElementById('treeContainer');
-            const infoMsg = document.getElementById('infoMsg');
-
-            infoMsg.classList.remove('hidden');
-            tree.innerHTML = ''; 
-            
+            document.getElementById('treeContainer').innerHTML = ''; 
             if(type === 'exempt') {
-                shareGroup.classList.add('hidden');
-                btnAddSh.classList.add('hidden');
-                btnAddRep.classList.add('hidden'); 
-                infoMsg.innerHTML = "✅ <strong>확인 면제 대상</strong>입니다.<br>실제소유자 정보를 수집하지 않습니다.";
-                calc();
+                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.add('hidden'); calc();
             } else if(type === 'nonprofit') {
-                shareGroup.classList.add('hidden');
-                btnAddSh.classList.add('hidden');
-                btnAddRep.classList.remove('hidden');
-                infoMsg.innerHTML = "🌿 <strong>비영리법인/단체</strong>입니다.<br>대표자를 <strong>2-(3) 유형</strong>으로 기재합니다.";
-                addRepDirect(); 
+                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.remove('hidden'); addRepDirect(); 
             } else {
-                shareGroup.classList.remove('hidden');
-                btnAddSh.classList.remove('hidden');
-                btnAddRep.classList.add('hidden');
-                infoMsg.innerHTML = "🏢 <strong>영리법인</strong>입니다.<br>지분율에 따라 <strong>2-(1), 2-(2)-②, 2-(2)-③</strong> 중 하나를 판별합니다.";
-                addRoot(); addRoot(); addRoot(); addRoot();
+                shareGroup.classList.remove('hidden'); btnAddSh.classList.remove('hidden'); btnAddRep.classList.add('hidden'); addRoot(); addRoot(); addRoot(); addRoot();
             }
         }
 
         function formatNum(n) { let p = String(n).split('.'); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); return p.join('.'); }
         function parseNum(s) { let c = String(s).replace(/,/g, ''); return (c===''||c==='.')?0:parseFloat(c); }
-
-        function onInputFormat(input) {
-            let val = parseNum(input.value);
-            if(input.value.trim() === '') input.value = '';
-            else if(!input.value.endsWith('.')) input.value = formatNum(val);
-            calc();
-        }
-
-        function onTreasuryInput(input) {
-            let val = parseNum(input.value);
-            if(input.value.trim() === '') input.value = '0';
-            else if(!input.value.endsWith('.')) input.value = formatNum(val);
-            calc();
-        }
-
+        function onInputFormat(input) { let val = parseNum(input.value); if(input.value.trim() === '') input.value = ''; else if(!input.value.endsWith('.')) input.value = formatNum(val); calc(); }
+        function onTreasuryInput(input) { let val = parseNum(input.value); if(input.value.trim() === '') input.value = '0'; else if(!input.value.endsWith('.')) input.value = formatNum(val); calc(); }
+        
         function onNodeValInput(input, id) {
             let n = shareholders.find(x => x.id === id);
             let parent = shareholders.find(x => x.id === n.pid);
             let mode = parent ? parent.corpMode : rootMode;
-
             if(mode === 'shares') {
                 let val = input.value.replace(/[^0-9]/g, '');
-                if(val === '') { 
-                    input.value = ''; 
-                    if(n) n.val = 0; 
-                } else { 
-                    input.value = parseInt(val).toLocaleString(); 
-                    if(n) n.val = parseInt(val);
-                }
+                if(val === '') { input.value = ''; if(n) n.val = 0; } else { input.value = parseInt(val).toLocaleString(); if(n) n.val = parseInt(val); }
             } else {
-                let val = parseNum(input.value);
-                if(n) n.val = val;
-                if(!input.value.endsWith('.') && input.value !== '') input.value = formatNum(val);
+                let val = parseNum(input.value); if(n) n.val = val; if(!input.value.endsWith('.') && input.value !== '') input.value = formatNum(val);
             }
             calc();
         }
 
         function onCorpTotalInput(input, id) {
-            let val = input.value.replace(/[^0-9]/g, '');
-            let n = shareholders.find(x => x.id === id);
-            if(val === '') {
-                input.value = '';
-                if(n) n.corpTotal = 0;
-            } else {
-                input.value = parseInt(val).toLocaleString();
-                if(n) n.corpTotal = parseInt(val);
-            }
+            let val = input.value.replace(/[^0-9]/g, ''); let n = shareholders.find(x => x.id === id);
+            if(val === '') { input.value = ''; if(n) n.corpTotal = 0; } else { input.value = parseInt(val).toLocaleString(); if(n) n.corpTotal = parseInt(val); }
             calc();
         }
 
-        function updateTargetDisplay() {
-            const v = document.getElementById('targetName').value;
-            document.getElementById('displayTarget').innerText = v || '대상법인';
-        }
-
-        function setCorpMode(id, m) {
-            let n = shareholders.find(x => x.id === id);
-            if(n) { n.corpMode = m; renderTree(); calc(); }
-        }
+        function updateTargetDisplay() { document.getElementById('displayTarget').innerText = document.getElementById('targetName').value || '대상법인'; }
+        function setCorpMode(id, m) { let n = shareholders.find(x => x.id === id); if(n) { n.corpMode = m; renderTree(); calc(); } }
 
         function renderTree() {
             const container = document.getElementById('treeContainer');
             container.innerHTML = '';
-            const roots = shareholders.filter(x => x.pid === null);
-            roots.forEach(r => renderNode(r, 0, container));
+            shareholders.filter(x => x.pid === null).forEach(r => renderNode(r, 0, container));
         }
 
         function renderNode(node, level, container) {
             const wrapper = document.createElement('div');
             wrapper.style.position = 'relative';
-            if(level > 0) {
-                wrapper.className = 'child-row'; 
-            } else {
-                wrapper.style.marginLeft = '0';
-            }
-
-            if(level > 0) {
-                const line = document.createElement('div');
-                line.className = 'tree-line';
-                wrapper.appendChild(line);
-            }
-
+            if(level > 0) wrapper.className = 'child-row'; 
+            
             const row = document.createElement('div');
             row.className = 'tree-row';
 
             if(currentType === 'nonprofit') {
                 row.innerHTML = `
-                    <span style="font-size:11px; font-weight:bold; color:#4338ca; width:40px;">임원</span>
-                    <input type="text" value="${node.name}" placeholder="대표자 성명" style="flex:1;" class="row-name" oninput="updateName(${node.id}, this.value)">
-                    <button class="btn-del" onclick="delNode(${node.id})">✖</button>
+                    <div class="node-inputs-wrapper">
+                        <span style="font-size:12px; font-weight:bold; color:#4338ca; width:40px; padding-top:8px;">임원</span>
+                        <input type="text" class="row-name" value="${node.name}" placeholder="대표자 성명" oninput="updateName(${node.id}, this.value)">
+                        <button class="btn-del" onclick="delNode(${node.id})">✖</button>
+                    </div>
                 `;
             } else {
                 let parent = shareholders.find(x => x.id === node.pid);
@@ -681,19 +344,22 @@
                 const repClass = node.isRep ? 'btn-rep active' : 'btn-rep';
 
                 row.innerHTML = `
-                    <select class="row-select" onchange="updateType(${node.id}, this.value)">
-                        <option value="individual" ${isInd?'selected':''}>개인</option>
-                        <option value="corp" ${isCorp?'selected':''}>법인</option>
-                    </select>
-                    <input type="text" value="${node.name}" placeholder="${phName}" class="row-name" oninput="updateName(${node.id}, this.value)">
-                    <div class="spinner-wrapper">
-                        <input type="text" id="val_${node.id}" value="${node.val>0?formatNum(node.val):''}" placeholder="${phVal}" 
-                            class="row-shares" oninput="onNodeValInput(this, ${node.id})">
+                    <div class="node-inputs-wrapper">
+                        <select class="row-select" onchange="updateType(${node.id}, this.value)">
+                            <option value="individual" ${isInd?'selected':''}>개인</option>
+                            <option value="corp" ${isCorp?'selected':''}>법인</option>
+                        </select>
+                        <input type="text" class="row-name" value="${node.name}" placeholder="${phName}" oninput="updateName(${node.id}, this.value)">
+                        <div class="spinner-wrapper">
+                            <input type="text" id="val_${node.id}" value="${node.val>0?formatNum(node.val):''}" placeholder="${phVal}" class="row-shares" oninput="onNodeValInput(this, ${node.id})">
+                            <span class="unit-text">${unit}</span>
+                        </div>
+                        <div class="btn-controls">
+                            ${level === 0 ? `<button class="${repClass}" onclick="toggleRep(${node.id})">대표</button>` : ''}
+                            ${isCorp ? `<button class="icon-btn" onclick="addSub(${node.id})" title="하위주주 추가">➕</button>` : ''}
+                            <button class="btn-del" onclick="delNode(${node.id})" title="삭제">✖</button>
+                        </div>
                     </div>
-                    <span class="unit-text">${unit}</span>
-                    ${level === 0 ? `<button class="${repClass}" onclick="toggleRep(${node.id})">대표</button>` : ''}
-                    ${isCorp ? `<button class="icon-btn" onclick="addSub(${node.id})" style="color:#10b981;">➕</button>` : ''}
-                    <button class="btn-del" onclick="delNode(${node.id})">✖</button>
                 `;
             }
             wrapper.appendChild(row);
@@ -702,112 +368,36 @@
                 const settings = document.createElement('div');
                 settings.className = 'corp-settings'; 
                 settings.innerHTML = `
-                    <strong>↳ ${node.name||'법인'} 설정:</strong>
-                    <select style="font-size:11px; padding:2px; height:24px;" onchange="setCorpMode(${node.id}, this.value)">
+                    <strong>↳ ${node.name||'법인'} 하위 설정:</strong>
+                    <select style="font-size:11px; padding:2px; height:24px; outline:none; border-radius:4px; border:1px solid #93c5fd;" onchange="setCorpMode(${node.id}, this.value)">
                         <option value="ratio" ${node.corpMode==='ratio'?'selected':''}>지분율(%) 기준</option>
                         <option value="shares" ${node.corpMode==='shares'?'selected':''}>주식수 기준</option>
                     </select>
-                    ${node.corpMode==='shares' ? `<input type="text" placeholder="총주식수" value="${node.corpTotal>0?formatNum(node.corpTotal):''}" style="width:80px; padding:2px; text-align:right; height:24px; font-size:11px;" oninput="onCorpTotalInput(this, ${node.id})">` : ''}
+                    ${node.corpMode==='shares' ? `<input type="text" placeholder="총주식수" value="${node.corpTotal>0?formatNum(node.corpTotal):''}" style="width:90px; padding:2px 6px; text-align:right; height:24px; font-size:11px; outline:none; border:1px solid #93c5fd; border-radius:4px;" oninput="onCorpTotalInput(this, ${node.id})">` : ''}
                 `;
                 wrapper.appendChild(settings);
             }
             container.appendChild(wrapper);
 
-            const children = shareholders.filter(x => x.pid === node.id);
-            if(children.length > 0) {
-                const childContainer = document.createElement('div');
-                wrapper.appendChild(childContainer);
-                children.forEach(c => renderNode(c, level+1, childContainer));
-            }
+            shareholders.filter(x => x.pid === node.id).forEach(c => renderNode(c, level+1, container));
         }
 
         function updateName(id, v) { let n=shareholders.find(x=>x.id===id); if(n) { n.name=v; calc(); } }
         function updateType(id, v) { let n=shareholders.find(x=>x.id===id); if(n) { n.type=v; if(v==='corp'){n.corpTotal=0; n.corpMode='ratio';} renderTree(); calc(); } }
         function toggleRep(id) { let n=shareholders.find(x=>x.id===id); if(n) n.isRep=!n.isRep; renderTree(); calc(); }
         
-        function addRoot() {
-            let id = (shareholders.length?Math.max(...shareholders.map(x=>x.id)):0)+1;
-            shareholders.push({id, pid:null, type:'individual', name:'', val:0, isRep:false, corpTotal:0, corpMode:'ratio'});
-            renderTree(); calc();
-        }
-        function addRepDirect() {
-            let id = (shareholders.length?Math.max(...shareholders.map(x=>x.id)):0)+1;
-            shareholders.push({id, pid:null, type:'individual', name:'', val:0, isRep:true, corpTotal:0, corpMode:'ratio'});
-            renderTree(); calc();
-        }
-        function addSub(pid) {
-            let id = (shareholders.length?Math.max(...shareholders.map(x=>x.id)):0)+1;
-            shareholders.push({id, pid, type:'individual', name:'', val:0, isRep:false, corpTotal:0, corpMode:'ratio'});
-            renderTree(); calc();
-        }
+        function addRoot() { let id = (shareholders.length?Math.max(...shareholders.map(x=>x.id)):0)+1; shareholders.push({id, pid:null, type:'individual', name:'', val:0, isRep:false, corpTotal:0, corpMode:'ratio'}); renderTree(); calc(); }
+        function addRepDirect() { let id = (shareholders.length?Math.max(...shareholders.map(x=>x.id)):0)+1; shareholders.push({id, pid:null, type:'individual', name:'', val:0, isRep:true, corpTotal:0, corpMode:'ratio'}); renderTree(); calc(); }
+        function addSub(pid) { let id = (shareholders.length?Math.max(...shareholders.map(x=>x.id)):0)+1; shareholders.push({id, pid, type:'individual', name:'', val:0, isRep:false, corpTotal:0, corpMode:'ratio'}); renderTree(); calc(); }
         function delNode(id) {
             let toDel = [id]; let i=0;
-            while(i<toDel.length) {
-                let p = toDel[i++];
-                shareholders.filter(x=>x.pid===p).forEach(x=>toDel.push(x.id));
-            }
+            while(i<toDel.length) { let p = toDel[i++]; shareholders.filter(x=>x.pid===p).forEach(x=>toDel.push(x.id)); }
             shareholders = shareholders.filter(x=>!toDel.includes(x.id));
             renderTree(); calc();
         }
 
-        function validateData(votingTotal) {
-            let msgs = [];
-            let errorNodes = [];
-
-            let treasury = parseNum(document.getElementById('treasuryShares').value);
-            let total = parseNum(document.getElementById('totalShares').value);
-            if(rootMode === 'shares' && treasury > total) {
-                msgs.push("❌ 자사주가 발행주식총수를 초과했습니다.");
-                document.getElementById('treasuryShares').classList.add('error-input');
-            } else {
-                document.getElementById('treasuryShares').classList.remove('error-input');
-            }
-
-            shareholders.forEach(node => {
-                let input = document.getElementById(`val_${node.id}`);
-                if(!input) return;
-                input.classList.remove('error-input');
-
-                let parent = shareholders.find(x => x.id === node.pid);
-                let limit = 0;
-                
-                if(!parent) { 
-                    if(rootMode === 'shares') limit = total; 
-                    else limit = 100;
-                } else { 
-                    if(parent.corpMode === 'shares') limit = parent.corpTotal || 0;
-                    else limit = 100;
-                }
-
-                if(limit > 0 && node.val > limit) {
-                    input.classList.add('error-input');
-                    errorNodes.push(node.name || '주주');
-                }
-            });
-
-            if(errorNodes.length > 0) {
-                msgs.push(`❌ 입력값 초과: ${errorNodes.join(', ')}의 주식/지분이 기준보다 많습니다.`);
-            }
-
-            let chartTotal = document.getElementById('chartTotal').innerText.replace('%','');
-            if(parseFloat(chartTotal) > 100.1) { 
-                msgs.push("❌ 전체 지분율 합계가 100%를 초과합니다.");
-            }
-
-            const box = document.getElementById('validationBox');
-            if(msgs.length > 0) {
-                box.style.display = 'block';
-                box.innerHTML = msgs.join('<br>');
-            } else {
-                box.style.display = 'none';
-            }
-        }
-
         function calc() {
-            ['box-type1', 'box-type2', 'box-type3', 'box-type4'].forEach(id => {
-                document.getElementById(id).classList.remove('active');
-            });
-            document.getElementById('tieAlert').style.display = 'none';
+            ['box-type1', 'box-type2', 'box-type3', 'box-type4'].forEach(id => { document.getElementById(id).classList.remove('active'); });
 
             if(currentType === 'exempt') { updateUI('exempt', [], [], [], false); return; }
             if(currentType === 'nonprofit') {
@@ -818,51 +408,22 @@
             }
 
             let rootTotal = 10000;
-            if(rootMode === 'shares') {
-                let t = parseNum(document.getElementById('totalShares').value);
-                rootTotal = t === 0 ? 1 : t;
-            } else rootTotal = 100;
-
-            let treasury = 0;
-            if(rootMode === 'shares') {
-                treasury = parseNum(document.getElementById('treasuryShares').value);
-            }
-            
-            let votingTotal = rootTotal - treasury;
-            if(votingTotal <= 0) votingTotal = 1;
-
-            if(rootMode === 'shares') {
-                document.getElementById('votingSharesDisplay').innerText = `= 의결권 있는 주식수: ${formatNum(votingTotal)}주`;
-            } else {
-                document.getElementById('votingSharesDisplay').innerText = ``;
-            }
+            if(rootMode === 'shares') { let t = parseNum(document.getElementById('totalShares').value); rootTotal = t === 0 ? 1 : t; } else rootTotal = 100;
+            let treasury = rootMode === 'shares' ? parseNum(document.getElementById('treasuryShares').value) : 0;
+            let votingTotal = rootTotal - treasury; if(votingTotal <= 0) votingTotal = 1;
 
             let effMap = {};
             const getLocalRatio = (node) => {
                 let parent = shareholders.find(x => x.id === node.pid);
                 let mode, denom;
-                
-                if(!parent) { 
-                    mode = rootMode; 
-                    denom = votingTotal; 
-                } else { 
-                    mode = parent.corpMode; 
-                    if(mode === 'shares') {
-                        denom = parent.corpTotal; 
-                        if(!denom || denom <= 0) return 0;
-                    } else {
-                        denom = 100;
-                    }
-                }
-                
+                if(!parent) { mode = rootMode; denom = votingTotal; } 
+                else { mode = parent.corpMode; if(mode === 'shares') { denom = parent.corpTotal; if(!denom || denom <= 0) return 0; } else { denom = 100; } }
                 if(mode === 'shares') return (node.val / denom) * 100;
                 return node.val;
             };
 
             const calcEff = (node, parentEff) => {
-                let localR = getLocalRatio(node);
-                let eff = parentEff * (localR / 100);
-                effMap[node.id] = eff;
+                let localR = getLocalRatio(node); let eff = parentEff * (localR / 100); effMap[node.id] = eff;
                 shareholders.filter(x => x.pid === node.id).forEach(c => calcEff(c, eff));
             };
             shareholders.filter(x => x.pid === null).forEach(r => calcEff(r, 100));
@@ -876,177 +437,126 @@
             });
             shareholders.filter(n => n.pid === null && n.isRep && n.name.trim()).forEach(n => {
                 if(consolidated[n.name]) consolidated[n.name].isRep = true;
-                else consolidated[n.name] = { ratio: 0, isRep: true };
             });
 
-            let list = Object.keys(consolidated).map(name => ({
-                name, 
-                ratio: parseFloat(consolidated[name].ratio.toFixed(2)),
-                isRep: consolidated[name].isRep
-            }));
-
-            let resultType = ''; 
-            let winners = []; 
-            let isTie = false;
-            
+            let list = Object.keys(consolidated).map(name => ({ name, ratio: parseFloat(consolidated[name].ratio.toFixed(2)), isRep: consolidated[name].isRep }));
+            let resultType = ''; let winners = []; 
             const over25 = list.filter(x => x.ratio >= 25);
             if(over25.length > 0) { resultType = 'type1'; winners = over25; }
             else if(list.length > 0) {
                 const max = Math.max(...list.map(x => x.ratio));
                 if(max > 0) {
                     const maxList = list.filter(x => x.ratio === max);
-                    if(maxList.length === 1) { resultType = 'type2'; winners = maxList; }
-                    else { resultType = 'type3'; isTie = true; }
+                    if(maxList.length === 1) { resultType = 'type2'; winners = maxList; } else { resultType = 'type3'; }
                 } else resultType = 'type3';
             } else resultType = 'type3';
 
-            if(resultType === 'type3') {
-                const reps = list.filter(x => x.isRep);
-                if(reps.length > 0) winners = reps;
-                else { winners = []; } 
-            }
+            if(resultType === 'type3') { const reps = list.filter(x => x.isRep); if(reps.length > 0) winners = reps; }
 
             let displayList = [...list].sort((a,b) => b.ratio - a.ratio).slice(0, 4);
-            winners.forEach(w => {
-                if(!displayList.some(d => d.name === w.name)) displayList.unshift(w);
-            });
+            winners.forEach(w => { if(!displayList.some(d => d.name === w.name)) displayList.unshift(w); });
             if(displayList.length > 4) displayList = displayList.slice(0, 4);
 
-            updateUI(resultType, winners, displayList, list, isTie);
-            
-            validateData(votingTotal);
+            updateUI(resultType, winners, displayList, list, false);
+        }
+
+        function updateStore(el, field) {
+            let baseName = el.getAttribute('data-name');
+            if(uboDetailsStore[baseName]) { uboDetailsStore[baseName][field] = el.value; }
         }
 
         function updateUI(type, winners, displayList, allList, isTie) {
             const badge = document.getElementById('stepBadge');
             const tbody = document.getElementById('resultBody');
-            
-            // 스위치 상태 확인
-            let isAutoFillOn = false;
-            const switchElem = document.getElementById('autoFillSwitch');
-            if(switchElem) { isAutoFillOn = switchElem.checked; }
+            let isAutoFillOn = document.getElementById('autoFillSwitch') ? document.getElementById('autoFillSwitch').checked : false;
 
             if(type === 'exempt') {
                 document.getElementById('resultCard').style.borderTopColor = '#64748b';
-                badge.innerText = '확인면제';
-                badge.style.color = '#64748b';
+                badge.innerText = '확인면제'; badge.style.color = '#64748b';
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">면제 대상이므로 기재 생략</td></tr>`;
+                window.currentPrintData = { type: 'exempt', list: [] };
                 return;
             }
 
             if(type) {
-                const boxId = `box-${type}`;
-                const box = document.getElementById(boxId);
+                const box = document.getElementById(`box-${type}`);
                 if(box) box.classList.add('active');
-                
                 if(type === 'type1') document.getElementById('resultCard').style.borderTopColor = '#3b82f6';
                 else if(type === 'type2') document.getElementById('resultCard').style.borderTopColor = '#10b981'; 
                 else if(type === 'type3') document.getElementById('resultCard').style.borderTopColor = '#f59e0b';
                 else if(type === 'type4') document.getElementById('resultCard').style.borderTopColor = '#1e293b'; 
-
-                badge.innerText = '판별완료';
-                badge.style.color = '#1e293b';
-            } else {
-                badge.innerText = '확인필요';
-            }
-
-            if(type === 'type3' && winners.length === 0) {
-                document.getElementById('tieAlert').style.display = 'block';
-                document.getElementById('tieAlert').innerText = "⚠️ 지분 동률(또는 정보없음)! 대표자(대표)를 선택하세요.";
-            }
+                badge.innerText = '판별완료'; badge.style.color = '#1e293b';
+            } else badge.innerText = '확인필요';
 
             if(currentType === 'profit') drawChart(allList);
-
             tbody.innerHTML = '';
             
             let finalRenderList = [];
             if(type === 'type1' || type === 'type2') {
                 let sortedAll = [...allList].sort((a,b) => b.ratio - a.ratio);
                 let currentSum = 0;
-                
                 for(let i=0; i<sortedAll.length && i<4; i++) {
                     let p = {...sortedAll[i]};
-                    finalRenderList.push(p);
-                    currentSum += p.ratio;
+                    finalRenderList.push(p); currentSum += p.ratio;
                 }
-
-                // 50% 강제 보정 스위치 로직
+                // [V67 적용] 50% 강제 보정을 마지막 사람(가장 지분 적은 사람)에게 적용
                 if(isAutoFillOn && finalRenderList.length > 0 && currentSum < 50.0) {
-                    let lastIdx = finalRenderList.length - 1; 
-                    finalRenderList[lastIdx].name += " 외";
-                    let needed = 50.1 - (currentSum - finalRenderList[lastIdx].ratio);
-                    finalRenderList[lastIdx].ratio = parseFloat(needed.toFixed(2));
+                    let deficit = 50 - currentSum;
+                    let lastIdx = finalRenderList.length - 1;
+                    finalRenderList[lastIdx].nameSuffix = " 외";
+                    finalRenderList[lastIdx].ratio = parseFloat((finalRenderList[lastIdx].ratio + deficit).toFixed(2));
                 }
-            } else {
-                finalRenderList = displayList; 
-            }
+            } else { finalRenderList = displayList; }
+
+            window.currentPrintData = { type: type, list: finalRenderList };
 
             for(let i=0; i<4; i++) {
-                const w = finalRenderList[i];
-                const tr = document.createElement('tr');
-                
-                if(w) {
-                    const isWin = winners.some(x => x.name === w.name.replace(' 외',''));
-                    const eng = romanize(w.name.replace(' 외',''));
-                    const ratioText = (currentType === 'nonprofit' || type === 'type3') ? '-' : `${w.ratio}%`;
-                    if(isWin) tr.style.background = "#fcfefe";
+                if(i < finalRenderList.length) {
+                    let w = finalRenderList[i];
+                    let baseName = w.name;
+                    let displayName = w.nameSuffix ? baseName + w.nameSuffix : baseName;
                     
-                    tr.innerHTML = `
-                        <td><input type="text" class="tbl-input edited" value="${w.name}" readonly></td>
-                        <td><input type="text" class="tbl-input" value="${eng}"></td>
-                        <td><input type="text" class="tbl-input" placeholder="필수입력"></td>
-                        <td><input type="text" class="tbl-input default-val" value="대한민국" oninput="this.className='tbl-input edited'"></td>
-                        <td style="font-weight:bold; text-align:center;">${ratioText}</td>
+                    if(!uboDetailsStore[baseName]) { uboDetailsStore[baseName] = { eng: romanize(baseName), birth: '', nation: '대한민국' }; }
+                    let det = uboDetailsStore[baseName];
+                    const ratioText = (currentType === 'nonprofit' || type === 'type3') ? '-' : `${w.ratio}%`;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><input type="text" class="tbl-input" value="${displayName}" readonly style="font-weight:700; color:#4f46e5;"></td>
+                            <td><input type="text" class="tbl-input editable" data-name="${baseName}" value="${det.eng}" placeholder="입력" oninput="updateStore(this, 'eng')"></td>
+                            <td><input type="text" class="tbl-input editable" data-name="${baseName}" value="${det.birth}" placeholder="입력" oninput="updateStore(this, 'birth')"></td>
+                            <td><input type="text" class="tbl-input editable" data-name="${baseName}" value="${det.nation}" oninput="updateStore(this, 'nation')"></td>
+                            <td style="font-weight:bold; text-align:center;">${ratioText}</td>
+                        </tr>
                     `;
                 } else {
-                    tr.innerHTML = `
-                        <td><input type="text" class="tbl-input" disabled></td>
-                        <td><input type="text" class="tbl-input" disabled></td>
-                        <td><input type="text" class="tbl-input default-val" value="필수입력" disabled></td>
-                        <td><input type="text" class="tbl-input default-val" value="필수입력" disabled></td>
-                        <td></td>
-                    `;
+                    tbody.innerHTML += `<tr><td><input type="text" class="tbl-input" disabled></td><td><input type="text" class="tbl-input" disabled></td><td><input type="text" class="tbl-input" disabled></td><td><input type="text" class="tbl-input" disabled></td><td></td></tr>`;
                 }
-                tbody.appendChild(tr);
             }
         }
 
         function drawChart(data) {
-            const canvas = document.getElementById('mainChart');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width; const h = canvas.height;
-            ctx.clearRect(0, 0, w, h);
-            let list = [...data].sort((a,b) => b.ratio - a.ratio);
-            let sum = list.reduce((a,b) => a + b.ratio, 0);
+            const canvas = document.getElementById('mainChart'); if(!canvas) return;
+            const ctx = canvas.getContext('2d'); const w = canvas.width; const h = canvas.height; ctx.clearRect(0, 0, w, h);
+            let list = [...data].sort((a,b) => b.ratio - a.ratio); let sum = list.reduce((a,b) => a + b.ratio, 0);
             document.getElementById('chartTotal').innerText = Math.round(sum) + '%';
             if(sum < 99.9) list.push({ name: '기타', ratio: 100 - sum, isOther: true });
-            let start = -0.5 * Math.PI;
-            const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
-            const legend = document.getElementById('chartLegend');
-            legend.innerHTML = '';
+            let start = -0.5 * Math.PI; const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
+            document.getElementById('chartLegend').innerHTML = '';
             list.forEach((d, i) => {
-                if(d.ratio <= 0) return;
-                const slice = (d.ratio / 100) * 2 * Math.PI;
-                const end = start + slice;
-                const color = d.isOther ? '#f1f5f9' : colors[i % colors.length];
-                ctx.beginPath(); ctx.arc(w/2, h/2, 60, start, end); ctx.lineWidth = 20; ctx.strokeStyle = color; ctx.stroke();
-                start = end;
-                if(!d.isOther) {
-                    const item = document.createElement('div');
-                    item.className = 'legend-item';
-                    item.innerHTML = `<div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:${color}; border-radius:50%;"></span><span>${d.name}</span></div><strong>${d.ratio}%</strong>`;
-                    legend.appendChild(item);
-                }
+                if(d.ratio <= 0) return; const slice = (d.ratio / 100) * 2 * Math.PI; const end = start + slice; const color = d.isOther ? '#f1f5f9' : colors[i % colors.length];
+                ctx.beginPath(); ctx.arc(w/2, h/2, 50, start, end); ctx.lineWidth = 20; ctx.strokeStyle = color; ctx.stroke(); start = end;
+                if(!d.isOther) document.getElementById('chartLegend').innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span style="color:${color}; font-weight:bold;">● ${d.name}</span><span>${d.ratio}%</span></div>`;
             });
         }
 
         function romanize(name) {
             if(!name) return "";
-            const surnames = { '김':'Kim', '이':'Lee', '박':'Park', '최':'Choi', '정':'Jung', '강':'Kang', '조':'Jo', '윤':'Yoon', '장':'Jang', '임':'Lim', '한':'Han', '오':'Oh', '서':'Seo', '신':'Shin', '권':'Kwon', '황':'Hwang', '안':'Ahn', '송':'Song', '류':'Ryu', '전':'Jeon', '홍':'Hong', '남':'Nam', '심':'Sim', '노':'Roh', '하':'Ha', '곽':'Kwak', '성':'Sung', '차':'Cha', '주':'Joo', '우':'Woo', '구':'Koo', '민':'Min', '유':'Yoo', '나':'Na', '진':'Jin', '지':'Ji', '엄':'Um', '채':'Chae', '원':'Won', '천':'Cheon', '방':'Bang', '공':'Kong', '현':'Hyun', '함':'Ham', '변':'Byun', '염':'Yeom', '양':'Yang', '여':'Yeo', '추':'Chu', '도':'Do', '소':'So', '석':'Seok', '선':'Sun', '설':'Seol', '마':'Ma', '길':'Gil', '연':'Yeon', '위':'Wi', '표':'Pyo', '기':'Ki', '반':'Ban', '왕':'Wang', '금':'Keum', '옥':'Ok', '육':'Yuk', '인':'In', '맹':'Maeng', '제':'Je', '모':'Mo', '탁':'Tak', '국':'Kook', '어':'Eom', '은':'Eun', '편':'Pyeon' };
-            const CHO = ['G','Kk','N','D','Tt','R','M','B','Pp','S','Ss','','J','Jj','Ch','K','T','P','H'];
-            const JUNG = ['a','ae','ya','yae','eo','e','yeo','ye','o','wa','wae','oe','yo','u','wo','we','wi','yu','eu','ui','i'];
-            const JONG = ['','k','k','ks','n','nj','nh','d','l','lg','lm','lb','ls','lt','lp','lh','m','b','bs','s','ss','ng','j','ch','k','t','p','h'];
+            const surnames = { '김':'KIM', '이':'LEE', '박':'PARK', '최':'CHOI', '정':'JUNG', '강':'KANG', '조':'CHO', '윤':'YOON', '장':'JANG', '임':'LIM', '한':'HAN', '오':'OH', '서':'SEO', '신':'SHIN', '권':'KWON', '황':'HWANG', '안':'AHN', '송':'SONG', '류':'RYU', '전':'JEON', '홍':'HONG', '고':'KO', '문':'MOON', '양':'YANG', '손':'SON', '배':'BAE', '백':'BAEK', '허':'HEO', '유':'YOO', '남':'NAM', '심':'SHIM', '노':'NOH', '하':'HA', '곽':'KWAK', '성':'SUNG', '차':'CHA', '주':'JOO', '우':'WOO', '구':'KOO', '민':'MIN' };
+            const CHO = ['G','KK','N','D','TT','R','M','B','PP','S','SS','','J','JJ','CH','K','T','P','H'];
+            const JUNG = ['A','AE','YA','YAE','EO','E','YEO','YE','O','WA','WAE','OE','YO','U','WO','WE','WI','YU','EU','UI','I'];
+            const JONG = ['','K','K','KS','N','NJ','NH','D','L','LG','LM','LB','LS','LT','LP','LH','M','B','BS','S','SS','NG','J','CH','K','T','P','H'];
+            
             let res = "";
             for(let i=0; i<name.length; i++) {
                 const c = name[i];
@@ -1056,13 +566,216 @@
                     const cho = Math.floor(code / 588);
                     const jung = Math.floor((code - (cho*588)) / 28);
                     const jong = code % 28;
-                    let s = CHO[cho] + JUNG[jung] + JONG[jong];
-                    res += s.charAt(0).toUpperCase() + s.slice(1);
-                } else res += c;
+                    res += CHO[cho] + JUNG[jung] + JONG[jong];
+                } else {
+                    res += c;
+                }
             }
-            return res.trim();
+            return res.toUpperCase().trim();
+        }
+
+        /* [독립 프로세스 인쇄 로직] */
+        function triggerPrint() {
+            let containerClone = document.querySelector('.container').cloneNode(true);
+            let styles = ''; document.querySelectorAll('style').forEach(s => { styles += s.outerHTML; });
+            
+            let canvas = document.getElementById('mainChart');
+            let clonedCanvas = containerClone.querySelector('#mainChart');
+            if (canvas && clonedCanvas) {
+                let img = document.createElement('img');
+                img.src = canvas.toDataURL('image/png');
+                img.style.cssText = 'max-width:130px; max-height:130px; display:block; margin:0 auto;';
+                clonedCanvas.parentNode.replaceChild(img, clonedCanvas);
+            }
+            containerClone.querySelectorAll('input').forEach(i => { i.setAttribute('value', i.value); });
+
+            let htmlStr = `
+            <!DOCTYPE html>
+            <html><head><title>보고서 인쇄</title>${styles}
+            <style>
+                @page { size: A4; margin: 10mm; }
+                body { background: #fff; padding: 0; margin: 0; }
+                .container { display: block !important; width: 100% !important; max-width: none !important; }
+                .print-col-left { break-after: page; page-break-after: always; display: block; width: 100%; margin-bottom: 30px; }
+                .print-col-right { break-before: page; page-break-before: always; display: block; width: 100%; }
+                .header-btns, .btn-add, .btn-del, .icon-btn, .mode-switch, .btn-rep:not(.active) { display: none !important; }
+                .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+                input[type="text"], select { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: bold; -webkit-appearance: none; }
+                .tbl-input.editable { border: none !important; background: transparent !important; }
+                .type-box:not(.active) { display: none !important; }
+                .type-box.active { border: 2px solid #000 !important; background: #f8fafc !important; }
+                .result-table { border: 2px solid #000; }
+                .result-table th, .result-table td { border: 1px solid #000; }
+            </style></head><body>${containerClone.outerHTML}
+            <script>window.onload = function() { setTimeout(function() { window.print(); }, 300); };<\/script></body></html>`;
+            
+            let blob = new Blob([htmlStr], { type: 'text/html;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        /* [V67 아이폰 PWA 출력 여백 원본 유지] */
+        function triggerOfficialPrint() {
+            const corpName = document.getElementById('targetName').value || "(주)__________________";
+            const printData = window.currentPrintData;
+            
+            let rowsHtml = "";
+            let dataList = (printData && printData.list) ? printData.list : [];
+            for(let i=0; i<4; i++) {
+                if(i < dataList.length && dataList[i]) {
+                    const d = dataList[i];
+                    const baseName = d.name;
+                    const displayName = d.nameSuffix ? baseName + d.nameSuffix : baseName;
+                    const det = uboDetailsStore[baseName] || { eng:'', birth:'', nation:'' };
+                    const ratioText = (printData.type === 'type4' || printData.type === 'type3') ? '-' : `${d.ratio}%`;
+                    
+                    rowsHtml += `<tr style="height:40px;">
+                        <td class="txt-center">${displayName}</td>
+                        <td class="txt-center">${det.eng}</td>
+                        <td class="txt-center">${det.birth}</td>
+                        <td class="txt-center">${det.nation}</td>
+                        <td class="txt-center">${ratioText}</td>
+                    </tr>`;
+                } else {
+                    rowsHtml += `<tr style="height:40px;"><td></td><td></td><td></td><td></td><td></td></tr>`;
+                }
+            }
+
+            const isExempt = document.getElementById('entityType').value === 'exempt';
+            const chkState = isExempt ? "checked" : "";
+            const isType1 = printData.type === 'type1' ? "checked" : "";
+            const isType2 = printData.type === 'type2' ? "checked" : "";
+            const isType3 = printData.type === 'type3' ? "checked" : "";
+            const isType4 = printData.type === 'type4' ? "checked" : "";
+
+            let htmlStr = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>법인·단체 실제소유자 확인서</title>
+                    <style>
+                        @page { size: A4 portrait; margin: 12mm 15mm; }
+                        body { 
+                            font-family: "Malgun Gothic", "맑은 고딕", serif; 
+                            font-size: 11px; line-height: 1.4; color: #000; 
+                            padding: 0; margin: 0; 
+                            width: 100%; max-width: 100%; 
+                            box-sizing: border-box; overflow: hidden; 
+                            padding-right: 2px; 
+                        }
+                        
+                        .form-title { font-size: 25px; font-weight: bold; text-align: center; margin-bottom: 35px; letter-spacing: 2px; color: #1e3a8a; }
+                        .form-title span { border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; }
+                        
+                        .preamble { font-size: 10.5px; color: #333; margin-bottom: 12px; line-height: 1.4; word-break: keep-all; }
+                        
+                        table { 
+                            width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; 
+                            border: 1.5px solid #000; 
+                        }
+                        th, td { border: 1px solid #333; padding: 4px 6px; vertical-align: middle; word-wrap: break-word; }
+                        .bg-blue { background-color: #e6f0fa; font-weight: bold; text-align: center; color: #1e3a8a; }
+                        .txt-center { text-align: center; }
+                        
+                        .section-title { font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #333; margin-top: 30px; }
+                        
+                        .check-box { display: inline-block; width: 12px; height: 12px; border: 1px solid #000; text-align: center; line-height: 12px; font-size: 10px; margin-right: 4px; background: #fff; }
+                        .check-box.checked::after { content: "V"; font-weight: bold; }
+                        
+                        .footer-box { display: flex; width: 100%; border: 2px solid #1e3a8a; margin-top: 40px; height: 70px; page-break-inside: avoid; }
+                        .footer-col { flex: 1; border-right: 1px solid #1e3a8a; display: flex; }
+                        .footer-col:last-child { border-right: none; }
+                        .f-title { background: #1e3a8a; color: #fff; font-weight: bold; font-size: 12px; padding: 8px; width: 100px; text-align: center; display: flex; align-items: center; justify-content: center; }
+                        .f-sign { flex: 1; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: #999; font-size: 13px; }
+                        
+                        .date-area { text-align: center; margin-top: 15px; font-size: 13px; font-weight: bold; page-break-inside: avoid; }
+                        .red-note { color: #d32f2f; font-size: 10px; font-weight: bold; margin-top: -8px; margin-bottom: 8px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="form-title"><span>법인 · 단체 실제소유자 확인서</span></div>
+                    
+                    <div class="preamble">
+                        본 확인서는 「특정 금융거래정보의 보고 및 이용 등에 관한 법률」 제5조의2(금융회사등의 고객확인의무)에 의해 작성이 요구되는 필수 서류입니다. 
+                        제공하신 정보는 법에서 정한 용도 이외에는 사용되지 않으며, 실제소유자 관련 정보 제공을 거절하거나, 
+                        제공한 실제소유자 정보의 검증이 불가능할 경우에는 동법에 의해 금융거래가 거절 또는 종료됩니다.
+                    </div>
+
+                    <div class="section-title" style="margin-top: 25px;">1. 실제소유자 확인 면제 대상에 해당하는 경우 <span style="font-size:9px; color:#d32f2f; font-weight:normal;">(면제대상 해당여부 확인 필수, 면제 대상 안내 참조)</span></div>
+                    <table>
+                        <colgroup><col width="20%"><col width="65%"><col width="15%"></colgroup>
+                        <tr>
+                            <td rowspan="4" class="bg-blue">실제소유자 확인<br>면제대상 단체</td>
+                            <td class="bg-blue">면제 대상 법인단체 유형</td>
+                            <td class="bg-blue">해당하는 경우 체크(택1)</td>
+                        </tr>
+                        <tr><td>국가, 지방자치단체(정부, 시·군·구청, 주민센터, 군경, 소방 등)</td><td class="txt-center"><span class="check-box ${chkState}"></span></td></tr>
+                        <tr><td>공공기관, 공공단체(공공기관의 운영에 관한 법률에 따른 공공기관, 정부출연 연구기관, 지방직영기업, 지방공사 및 지방공단 등)</td><td class="txt-center"><span class="check-box ${chkState}"></span></td></tr>
+                        <tr><td>금융회사등 (「특정금융거래정보의 보고 및 이용 등에 관한 법률」 제2조 제1호의 각 목에 해당하는 법인 및 단체에 한함)<br>사업보고서 제출 대상 법인(코스피, 코스닥 상장법인 등)</td><td class="txt-center"><span class="check-box ${chkState}"></span></td></tr>
+                    </table>
+
+                    <div class="section-title">2. 실제소유자 확인 대상인 경우 <span style="font-size:9px; color:#d32f2f; font-weight:normal;">(주주명부, 출자자명부 등 법인단체 지분 확인 가능한 서류 제출 필수)</span></div>
+                    <table>
+                        <colgroup><col width="10%"><col width="75%"><col width="15%"></colgroup>
+                        <tr>
+                            <td class="bg-blue">순 서</td><td class="bg-blue">법인단체 유형</td><td class="bg-blue">해당하는 경우 체크(택1)<br><span style="font-size:9px; color:#d32f2f;">※중복체크 금지</span></td>
+                        </tr>
+                        <tr>
+                            <td class="txt-center">(1)</td><td>25% 이상의 지분을 소유한 사람이 있는 경우</td><td class="txt-center"><span class="check-box ${isType1}"></span></td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4" class="txt-center">(2)</td>
+                            <td colspan="2" style="border-bottom:none;"><strong>주주명부, 사원명부, 출자자명부 등 지분 확인 가능한 서류를 통해 (1)번 해당자를 확인할 수 없는 경우</strong></td>
+                        </tr>
+                        <tr><td style="border-top:none; border-right:none;">① 대표자, 임원, 업무집행사원의 과반수를 선임한 주주</td><td class="txt-center" style="border-top:none; border-left:none;"><span class="check-box"></span></td></tr>
+                        <tr><td style="border-top:none; border-right:none;">② 최대 지분을 소유한 사람(25%미만의 지분을 소유)</td><td class="txt-center" style="border-top:none; border-left:none;"><span class="check-box ${isType2}"></span></td></tr>
+                        <tr><td style="border-top:none; border-right:none;">③ 위 ①, ② 외에 법인·단체를 사실상 지배하는 사람</td><td class="txt-center" style="border-top:none; border-left:none;"><span class="check-box ${isType3}"></span></td></tr>
+                        <tr>
+                            <td class="txt-center">(3)</td><td>(2)번 항목을 확인할 수 없는 경우 → <strong>법인또는 단체의 대표자 1인</strong> <span style="font-size:9px; color:#d32f2f;">※외국법인만 해당사항 없음</span></td><td class="txt-center"><span class="check-box ${isType4}"></span></td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <colgroup><col width="20%"><col width="25%"><col width="20%"><col width="15%"><col width="20%"></colgroup>
+                        <tr><td colspan="5" class="bg-blue" style="font-size:13px; padding:6px;">실제소유자 정보</td></tr>
+                        <tr>
+                            <td class="bg-blue">성명*<br><span style="font-size:9px; color:#555;">※ 반드시 실명을 기재</span></td>
+                            <td class="bg-blue">영문명*</td>
+                            <td class="bg-blue">생년월일*<br><span style="font-size:9px; color:#555;">[YYYY-MM-DD]</span></td>
+                            <td class="bg-blue">국적*<br><span style="font-size:9px; color:#555;">※ 외국 국적은 필수 기재</span></td>
+                            <td class="bg-blue">보유지분*<br><span style="font-size:9px; color:#555;">(1)또는(2)-② 선택시 필수</span></td>
+                        </tr>
+                        ${rowsHtml}
+                    </table>
+                    
+                    <div class="red-note">※ (1) 또는 (2)-②를 선택한 경우 실제소유자 정보를 보유지분 총합이 50%이상 충족될때까지(미충족시 최대 4명) 작성해야 합니다.</div>
+
+                    <div class="footer-box">
+                        <div class="footer-col">
+                            <div class="f-title">고 객<br>(계약자)</div>
+                            <div class="f-sign">(서명 또는 인)</div>
+                        </div>
+                        <div class="footer-col">
+                            <div class="f-title">실제소유자<br>정보확인자<br>(컨설턴트)</div>
+                            <div class="f-sign">(서명 또는 인)</div>
+                        </div>
+                    </div>
+
+                    <div class="date-area">
+                        작성일자: &nbsp;&nbsp;&nbsp; 2026 년 &nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp; 일
+                    </div>
+                    
+                    <script>
+                        window.onload = function() { setTimeout(function() { window.print(); }, 500); };
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            let blob = new Blob([htmlStr], { type: 'text/html;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+            window.open(url, '_blank', 'noopener,noreferrer');
         }
     </script>
 </body>
 </html>
-
