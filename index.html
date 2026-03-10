@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>실제소유자 판별기 V67 (iPhone PWA)</title>
+    <title>실제소유자 판별기 V70</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,7 @@
     </script>
     
     <style>
-        /* [V67 완벽 여백 및 모바일 최적화 CSS 원본 그대로] */
+        /* [V67 완벽 여백 및 모바일 최적화 CSS 절대 보존] */
         body { -webkit-user-select: none; user-select: none; }
         :root { --primary: #4f46e5; --bg-color: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text-main: #1e293b; --text-sub: #64748b; }
         * { box-sizing: border-box; }
@@ -48,6 +48,8 @@
         input[type="text"]:focus, select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         .input-group { margin-bottom: 15px; }
 
+        input.error-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #b91c1c !important; }
+
         .highlight-shares label { color: #2563eb !important; } 
         .highlight-shares input { border-color: #bfdbfe !important; background-color: #eff6ff !important; color: #1e3a8a !important; font-weight: 700; }
         .highlight-ratio label { color: #059669 !important; } 
@@ -56,6 +58,9 @@
         #totalShares, .row-shares { font-variant-numeric: tabular-nums; font-weight: 500; color: #1e293b; text-align: right; }
         .minus-group { margin-top: 6px; padding: 8px 12px; background: #fff1f2; border-radius: 8px; border: 1px solid #fecdd3; display: flex; justify-content: space-between; align-items: center; }
         .minus-input { width: 100px !important; padding: 0 8px !important; text-align: right; border: 1px solid #fda4af !important; color: #e11d48 !important; height: 30px; }
+        .calc-info { font-size: 11px; color: #4f46e5; text-align: right; margin-top: 5px; font-weight: 700; }
+
+        #validationBox { display: none; margin-bottom: 15px; padding: 10px; border-radius: 8px; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 12px; font-weight: 700; line-height: 1.4; }
         
         #treeContainer { width: 100%; display: block; }
         .tree-row { background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; position: relative; transition: 0.2s; }
@@ -93,6 +98,13 @@
         .badge-yellow { background: #fefce8; color: #854d0e; border: 1px solid #fde047; }
         .badge-white { background: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; }
 
+        .doc-title { font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .doc-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: #334155; line-height: 1.6; }
+        .doc-list li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+        .doc-list li::before { content: "📄"; font-size: 12px; margin-top: 3px; }
+        .doc-highlight { color: #b91c1c; font-weight: 700; background: #fef2f2; padding: 0 4px; border-radius: 3px; }
+        .doc-note-yellow { margin-top: 15px; background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; font-size: 12px; border-radius: 8px; font-weight: 600; line-height: 1.5; }
+
         .result-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .result-table th { background: #f8fafc; padding: 10px 2px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 700; }
         .result-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; text-align: center; vertical-align: middle; }
@@ -101,8 +113,10 @@
         .tbl-input.editable { border: 1px dashed #cbd5e1; background: #f8fafc; cursor: text; }
         .tbl-input.editable:focus { border: 1px solid #4f46e5; background: #fff; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
         
-        .hidden { display: none !important; }
+        .note-yellow-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; border-radius: 8px; font-size: 12px; font-weight: 600; line-height: 1.5; margin-top: 15px; }
 
+        .hidden { display: none !important; }
+        
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -110,7 +124,7 @@
 
     <div class="container">
         <div class="header">
-            <div class="title">🏢 실제소유자 판별기 V67 <span style="font-size:12px; color:#64748b; font-weight:normal;">(iPhone PWA)</span></div>
+            <div class="title">🏢 실제소유자 판별기 V70</div>
             <div class="header-btns">
                 <button class="action-btn" onclick="triggerOfficialPrint()" style="color: #059669; border-color: #a7f3d0; background:#ecfdf5;">
                     📜 서식양식 인쇄 (1장)
@@ -133,11 +147,19 @@
                 </div>
                 
                 <div class="input-group">
+                    <label>사업자등록번호 (유형 자동판별)</label>
+                    <input type="text" id="bizNumInput" placeholder="유형을 모를 경우 번호 입력" maxlength="12" oninput="onBizNumInput(this)">
+                    <div style="font-size:11px; color:#64748b; margin-top:4px;">※ 법인 유형을 이미 아신다면 바로 아래에서 선택해 주세요.</div>
+                </div>
+
+                <div class="input-group">
                     <label>법인단체 유형</label>
                     <select id="entityType" onchange="changeEntityType(this.value)" style="font-weight:bold;">
                         <option value="profit" selected>일반 영리법인 (주식회사 등)</option>
                         <option value="nonprofit">비영리법인/단체 (종교, 임의단체 등)</option>
-                        <option value="exempt">확인 면제 대상 (상장사, 공공기관 등)</option>
+                        <option value="exempt">확인 면제 대상 (상장사, 국가/공공기관 등)</option>
+                        <option value="foreign">외국법인 (국내 지점 및 영업소 등)</option>
+                        <option value="personal">개인사업자 (법인용 확인서 작성 불필요)</option>
                     </select>
                 </div>
 
@@ -156,11 +178,18 @@
                         <span class="minus-label">(-) 의결권 없는 주식</span>
                         <input type="text" id="treasuryShares" value="0" class="minus-input" oninput="onTreasuryInput(this)">
                     </div>
+                    <div id="votingSharesDisplay" class="calc-info">= 의결권 있는 주식수: 10,000주</div>
                 </div>
             </div>
 
             <div class="card">
-                <h3 style="margin:0 0 15px 0; font-size:15px; font-weight:700;">2️⃣ 주주 구성 입력</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="margin:0; font-size:15px; font-weight:700;">2️⃣ 주주 구성 입력</h3>
+                </div>
+
+                <div id="infoMsg" class="hidden"></div>
+                <div id="validationBox"></div>
+
                 <div id="treeContainer"></div>
                 <button class="btn-add" id="btnAddShareholder" onclick="addRoot()">+ 1차 주주 추가</button>
                 <button class="btn-add hidden" id="btnAddRep" onclick="addRepDirect()">+ 대표자(임원) 추가</button>
@@ -196,12 +225,16 @@
                         <div class="type-box" id="box-type4"><div class="type-badge badge-white">(3)</div><div class="type-text"><strong>법인/단체의 대표자 1인</strong></div></div>
                     </div>
                     
+                    <div id="tieAlert" style="display:none; background:#fef2f2; color:#b91c1c; font-size:12px; padding:10px; border-radius:6px; margin:10px 0; font-weight:700; text-align:center; border:1px solid #fecaca;">
+                        ⚠️ 지분 동률(또는 정보없음)! 대표자(대표)를 선택하세요.
+                    </div>
+
                     <div style="margin-top:20px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                             <strong style="font-size:13px; color:#1e293b;">📝 기재 명단 및 데이터 추가 입력</strong>
                             <label style="display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#4338ca; font-weight:700; background:#eef2ff; padding:6px 10px; border-radius:6px; border:1px solid #c7d2fe;">
                                 <input type="checkbox" id="autoFillSwitch" onchange="calc()" style="width:14px; height:14px; margin:0;">
-                                50% 요건 보정 ('외' 처리)
+                                50% 기재요건 맞추기 ('외' 보정)
                             </label>
                         </div>
                         <div style="font-size:11px; color:#ef4444; margin-bottom:8px;">※ 영문명, 생년월일, 국적은 아래 칸을 클릭하여 직접 수정하세요.</div>
@@ -217,7 +250,21 @@
                             </thead>
                             <tbody id="resultBody"></tbody>
                         </table>
+                        
+                        <div class="note-yellow-box" id="bottomNoticeBox">
+                            ※ 2-(1) 또는 2-(2)-② 유형은 보유지분 총합이 50% 이상 충족될 때까지 기재해야 합니다.<br>
+                            (입력 후 50%가 안 될 경우, 위 <strong>[50% 기재요건 맞추기]</strong> 버튼을 켜주세요.)
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="card" style="background:#f8fafc; border:1px solid #cbd5e1; page-break-inside: avoid;">
+                <div class="doc-title">📂 필수 제출 서류 (안내)</div>
+                <div id="docListContainer"></div>
+                <div class="doc-note-yellow">
+                    💡 <strong>3개월 경과 서류 처리:</strong><br>
+                    발급이 3개월 지난 서류는 <strong>명판(회사명), 현재날짜기재, 직인 날인</strong>시 인정 가능합니다. (내부 기준)
                 </div>
             </div>
         </div>
@@ -231,23 +278,94 @@
         let currentType = 'profit'; 
         let uboDetailsStore = {}; 
 
+        // [V70] 서류 제출 리스트 업데이트 (외국법인 및 개인사업자 추가)
+        const DOCS = {
+            profit: `
+                <ul class="doc-list">
+                    <li>사업자등록증 사본</li>
+                    <li>법인 등기부등본 (말소사항 포함) <span class="doc-highlight">(3개월 내)</span></li>
+                    <li><span class="doc-highlight">주주명부</span> (실제소유자 확인용 필수) <span class="doc-highlight">(3개월 내)</span></li>
+                    <li>실제소유자 확인서 (판별 결과 기재)</li>
+                </ul>
+            `,
+            nonprofit: `
+                <ul class="doc-list">
+                    <li>고유번호증 (또는 사업자등록증)</li>
+                    <li>등기부등본 또는 정관<br>(설립목적 및 대표권 확인용) 등 설립서류</li>
+                    <li>실제소유자확인서 유형은<br><span class="doc-highlight">(3) 법인 또는 단체의 대표자 1인</span> 으로 체크</li>
+                </ul>
+            `,
+            exempt: `
+                <ul class="doc-list">
+                    <li>사업자등록증 사본</li>
+                    <li>법인 등기부등본</li>
+                    <li><span class="doc-highlight">분기보고서</span> (또는 DART 공시 화면 캡처)</li>
+                    <li style="color:#64748b; font-size:11px;">※ 상장사임을 증빙하여 실제소유자 확인 면제</li>
+                </ul>
+            `,
+            foreign: `
+                <ul class="doc-list">
+                    <li>사업자등록증 사본 (또는 고유번호증)</li>
+                    <li>법인 등기부등본 (말소사항 포함) <span class="doc-highlight">(3개월 내)</span></li>
+                    <li><span class="doc-highlight">주주명부</span> (실제소유자 확인용 필수) <span class="doc-highlight">(3개월 내)</span></li>
+                    <li>실제소유자 확인서 (판별 결과 기재, <span style="color:#b91c1c; font-weight:bold;">국적 기재 주의</span>)</li>
+                </ul>
+            `,
+            personal: `
+                <div style="color:#b91c1c; font-weight:bold; font-size:13px; text-align:center; padding:10px 0;">
+                    개인사업자는 법인용 실제소유자 파악 및 관련 서류 징구 대상이 아닙니다.<br>
+                    (본 서식을 작성할 필요가 없습니다)
+                </div>
+            `
+        };
+
         function initApp() {
-            document.getElementById('entityType').value = 'profit';
+            document.getElementById('bizNumInput').value = '';
             document.getElementById('targetName').value = '';
             document.getElementById('totalShares').value = '10,000';
             document.getElementById('treasuryShares').value = '0';
             if (document.getElementById('autoFillSwitch')) document.getElementById('autoFillSwitch').checked = false;
             updateTargetDisplay();
             setMode('shares');
-            currentType = 'profit';
-            shareholders = [];
-            uboDetailsStore = {}; 
-            document.getElementById('treeContainer').innerHTML = ''; 
-            addRoot(); addRoot(); addRoot(); addRoot(); 
-            document.getElementById('totalSharesGroup').classList.remove('hidden');
-            document.getElementById('btnAddShareholder').classList.remove('hidden');
-            document.getElementById('btnAddRep').classList.add('hidden');
-            calc();
+            
+            document.getElementById('entityType').value = 'profit';
+            changeEntityType('profit');
+        }
+
+        function updateDocList(type) {
+            const container = document.getElementById('docListContainer');
+            container.innerHTML = DOCS[type] || DOCS['profit'];
+        }
+
+        // [V70] 스마트 내비게이션 로직
+        function onBizNumInput(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if(val.length > 3 && val.length <= 5) val = val.slice(0,3) + '-' + val.slice(3);
+            else if(val.length > 5) val = val.slice(0,3) + '-' + val.slice(3,5) + '-' + val.slice(5);
+            input.value = val;
+
+            const pureNums = val.replace(/-/g, '');
+            if(pureNums.length === 10) {
+                const mid = parseInt(pureNums.substring(3, 5), 10);
+                let detectedType = 'profit';
+                
+                if (mid === 81 || mid === 85 || mid === 86 || mid === 87) {
+                    detectedType = 'profit';
+                } else if (mid === 82 || mid === 89 || mid === 80) {
+                    detectedType = 'nonprofit';
+                } else if (mid === 83) {
+                    detectedType = 'exempt';
+                } else if (mid === 84) {
+                    detectedType = 'foreign';
+                } else if ((mid >= 1 && mid <= 79) || (mid >= 90 && mid <= 99)) {
+                    detectedType = 'personal';
+                }
+
+                if(currentType !== detectedType) {
+                    document.getElementById('entityType').value = detectedType;
+                    changeEntityType(detectedType);
+                }
+            }
         }
 
         function setMode(m) {
@@ -268,19 +386,45 @@
             renderTree(); calc();
         }
 
+        // [V70] 5개 그룹 UI/UX 자동 대응 로직
         function changeEntityType(type) {
             currentType = type;
             shareholders = [];
+            updateDocList(type); 
+
             const shareGroup = document.getElementById('totalSharesGroup');
             const btnAddSh = document.getElementById('btnAddShareholder');
             const btnAddRep = document.getElementById('btnAddRep');
+            const infoMsg = document.getElementById('infoMsg');
             document.getElementById('treeContainer').innerHTML = ''; 
+            
+            infoMsg.classList.remove('hidden');
+
             if(type === 'exempt') {
-                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.add('hidden'); calc();
+                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.add('hidden'); 
+                infoMsg.innerHTML = "✅ <strong>확인 면제 대상(국가/공공기관 등)</strong>입니다.<br>특정금융정보법에 따라 실제소유자 파악 및 서식 작성이 전면 생략됩니다.";
+                infoMsg.style.cssText = "background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; padding:12px; border-radius:8px; font-size:13px; margin-bottom:15px; line-height:1.4;";
+                calc();
             } else if(type === 'nonprofit') {
-                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.remove('hidden'); addRepDirect(); 
+                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.remove('hidden'); 
+                infoMsg.innerHTML = "🌿 <strong>비영리법인/단체</strong>입니다.<br>지분율 계산 없이 <strong>'법인 또는 단체의 대표자 1인'</strong>을 실제소유자로 지정합니다. 고유번호증이나 정관을 확인하세요.";
+                infoMsg.style.cssText = "background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; padding:12px; border-radius:8px; font-size:13px; margin-bottom:15px; line-height:1.4;";
+                addRepDirect(); 
+            } else if(type === 'foreign') {
+                shareGroup.classList.remove('hidden'); btnAddSh.classList.remove('hidden'); btnAddRep.classList.add('hidden'); 
+                infoMsg.innerHTML = "🌐 <strong>외국법인</strong>입니다.<br>지분율 계산은 일반 법인과 동일하나, 서식 작성 시 <strong>반드시 대한민국 외의 '국적'을 정확히 기재</strong>해야 하니 주의해 주세요!";
+                infoMsg.style.cssText = "background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; padding:12px; border-radius:8px; font-size:13px; margin-bottom:15px; line-height:1.4;";
+                addRoot(); addRoot(); addRoot(); addRoot();
+            } else if(type === 'personal') {
+                shareGroup.classList.add('hidden'); btnAddSh.classList.add('hidden'); btnAddRep.classList.add('hidden'); 
+                infoMsg.innerHTML = "🚨 <strong>개인사업자 번호</strong>입니다.<br>개인사업자는 법인이 아니므로 <strong>본 법인용 실제소유자 확인서 작성 대상이 아닙니다.</strong> (대표자 본인이 실소유자입니다)";
+                infoMsg.style.cssText = "background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:12px; border-radius:8px; font-size:13px; margin-bottom:15px; line-height:1.4;";
+                calc();
             } else {
-                shareGroup.classList.remove('hidden'); btnAddSh.classList.remove('hidden'); btnAddRep.classList.add('hidden'); addRoot(); addRoot(); addRoot(); addRoot();
+                shareGroup.classList.remove('hidden'); btnAddSh.classList.remove('hidden'); btnAddRep.classList.add('hidden'); 
+                infoMsg.innerHTML = "🏢 <strong>일반 영리법인</strong>입니다.<br>주주명부를 바탕으로 지분율에 따라 2-(1), 2-(2)-②, 2-(2)-③ 중 하나를 판별하세요.";
+                infoMsg.style.cssText = "background:#f8fafc; border:1px solid #cbd5e1; color:#334155; padding:12px; border-radius:8px; font-size:13px; margin-bottom:15px; line-height:1.4;";
+                addRoot(); addRoot(); addRoot(); addRoot();
             }
         }
 
@@ -364,7 +508,7 @@
             }
             wrapper.appendChild(row);
 
-            if(node.type === 'corp' && currentType === 'profit') {
+            if(node.type === 'corp' && (currentType === 'profit' || currentType === 'foreign')) {
                 const settings = document.createElement('div');
                 settings.className = 'corp-settings'; 
                 settings.innerHTML = `
@@ -396,10 +540,65 @@
             renderTree(); calc();
         }
 
+        function validateData(votingTotal) {
+            let msgs = [];
+            let errorNodes = [];
+
+            let treasury = parseNum(document.getElementById('treasuryShares').value);
+            let total = parseNum(document.getElementById('totalShares').value);
+            if(rootMode === 'shares' && treasury > total) {
+                msgs.push("❌ 자사주가 발행주식총수를 초과했습니다.");
+                document.getElementById('treasuryShares').classList.add('error-input');
+            } else {
+                document.getElementById('treasuryShares').classList.remove('error-input');
+            }
+
+            shareholders.forEach(node => {
+                let input = document.getElementById(`val_${node.id}`);
+                if(!input) return;
+                input.classList.remove('error-input');
+
+                let parent = shareholders.find(x => x.id === node.pid);
+                let limit = 0;
+                
+                if(!parent) { 
+                    if(rootMode === 'shares') limit = total; 
+                    else limit = 100;
+                } else { 
+                    if(parent.corpMode === 'shares') limit = parent.corpTotal || 0;
+                    else limit = 100;
+                }
+
+                if(limit > 0 && node.val > limit) {
+                    input.classList.add('error-input');
+                    errorNodes.push(node.name || '주주');
+                }
+            });
+
+            if(errorNodes.length > 0) {
+                msgs.push(`❌ 입력값 초과: ${errorNodes.join(', ')}의 주식/지분이 기준보다 많습니다.`);
+            }
+
+            let chartTotal = document.getElementById('chartTotal').innerText.replace('%','');
+            if(parseFloat(chartTotal) > 100.1) { 
+                msgs.push("❌ 전체 지분율 합계가 100%를 초과합니다.");
+            }
+
+            const box = document.getElementById('validationBox');
+            if(msgs.length > 0) {
+                box.style.display = 'block';
+                box.innerHTML = msgs.join('<br>');
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
         function calc() {
             ['box-type1', 'box-type2', 'box-type3', 'box-type4'].forEach(id => { document.getElementById(id).classList.remove('active'); });
+            document.getElementById('tieAlert').style.display = 'none'; 
 
-            if(currentType === 'exempt') { updateUI('exempt', [], [], [], false); return; }
+            // [V70] 개인사업자 처리
+            if(currentType === 'exempt' || currentType === 'personal') { updateUI(currentType, [], [], [], false); return; }
             if(currentType === 'nonprofit') {
                 const reps = shareholders.filter(x => x.name.trim() !== '');
                 let winners = reps.map(x => ({ name: x.name, ratio: 0, isRep: true }));
@@ -411,6 +610,12 @@
             if(rootMode === 'shares') { let t = parseNum(document.getElementById('totalShares').value); rootTotal = t === 0 ? 1 : t; } else rootTotal = 100;
             let treasury = rootMode === 'shares' ? parseNum(document.getElementById('treasuryShares').value) : 0;
             let votingTotal = rootTotal - treasury; if(votingTotal <= 0) votingTotal = 1;
+
+            if(rootMode === 'shares') {
+                document.getElementById('votingSharesDisplay').innerText = `= 의결권 있는 주식수: ${formatNum(votingTotal)}주`;
+            } else {
+                document.getElementById('votingSharesDisplay').innerText = ``;
+            }
 
             let effMap = {};
             const getLocalRatio = (node) => {
@@ -441,13 +646,16 @@
 
             let list = Object.keys(consolidated).map(name => ({ name, ratio: parseFloat(consolidated[name].ratio.toFixed(2)), isRep: consolidated[name].isRep }));
             let resultType = ''; let winners = []; 
+            let isTie = false; 
+
             const over25 = list.filter(x => x.ratio >= 25);
             if(over25.length > 0) { resultType = 'type1'; winners = over25; }
             else if(list.length > 0) {
                 const max = Math.max(...list.map(x => x.ratio));
                 if(max > 0) {
                     const maxList = list.filter(x => x.ratio === max);
-                    if(maxList.length === 1) { resultType = 'type2'; winners = maxList; } else { resultType = 'type3'; }
+                    if(maxList.length === 1) { resultType = 'type2'; winners = maxList; } 
+                    else { resultType = 'type3'; isTie = true; } 
                 } else resultType = 'type3';
             } else resultType = 'type3';
 
@@ -457,7 +665,8 @@
             winners.forEach(w => { if(!displayList.some(d => d.name === w.name)) displayList.unshift(w); });
             if(displayList.length > 4) displayList = displayList.slice(0, 4);
 
-            updateUI(resultType, winners, displayList, list, false);
+            updateUI(resultType, winners, displayList, list, isTie);
+            validateData(votingTotal); 
         }
 
         function updateStore(el, field) {
@@ -473,8 +682,20 @@
             if(type === 'exempt') {
                 document.getElementById('resultCard').style.borderTopColor = '#64748b';
                 badge.innerText = '확인면제'; badge.style.color = '#64748b';
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">면제 대상이므로 기재 생략</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b; font-weight:bold;">면제 대상이므로 기재 생략</td></tr>`;
+                document.getElementById('bottomNoticeBox').style.display = 'none';
                 window.currentPrintData = { type: 'exempt', list: [] };
+                drawChart([]);
+                return;
+            }
+
+            if(type === 'personal') {
+                document.getElementById('resultCard').style.borderTopColor = '#ef4444';
+                badge.innerText = '대상아님'; badge.style.color = '#ef4444';
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#ef4444; font-weight:bold;">법인이 아니므로 기재 생략 (대표자 본인 소유)</td></tr>`;
+                document.getElementById('bottomNoticeBox').style.display = 'none';
+                window.currentPrintData = { type: 'personal', list: [] };
+                drawChart([]);
                 return;
             }
 
@@ -486,9 +707,18 @@
                 else if(type === 'type3') document.getElementById('resultCard').style.borderTopColor = '#f59e0b';
                 else if(type === 'type4') document.getElementById('resultCard').style.borderTopColor = '#1e293b'; 
                 badge.innerText = '판별완료'; badge.style.color = '#1e293b';
-            } else badge.innerText = '확인필요';
+                document.getElementById('bottomNoticeBox').style.display = 'block';
+            } else {
+                badge.innerText = '확인필요';
+                document.getElementById('bottomNoticeBox').style.display = 'none';
+            }
 
-            if(currentType === 'profit') drawChart(allList);
+            if(type === 'type3' && winners.length === 0) {
+                document.getElementById('tieAlert').style.display = 'block';
+                document.getElementById('tieAlert').innerText = "⚠️ 지분 동률(또는 정보없음)! 대표자(대표)를 선택하세요.";
+            }
+
+            if(currentType === 'profit' || currentType === 'foreign') drawChart(allList);
             tbody.innerHTML = '';
             
             let finalRenderList = [];
@@ -499,7 +729,6 @@
                     let p = {...sortedAll[i]};
                     finalRenderList.push(p); currentSum += p.ratio;
                 }
-                // [V67 적용] 50% 강제 보정을 마지막 사람(가장 지분 적은 사람)에게 적용
                 if(isAutoFillOn && finalRenderList.length > 0 && currentSum < 50.0) {
                     let deficit = 50 - currentSum;
                     let lastIdx = finalRenderList.length - 1;
@@ -574,7 +803,6 @@
             return res.toUpperCase().trim();
         }
 
-        /* [독립 프로세스 인쇄 로직] */
         function triggerPrint() {
             let containerClone = document.querySelector('.container').cloneNode(true);
             let styles = ''; document.querySelectorAll('style').forEach(s => { styles += s.outerHTML; });
@@ -614,7 +842,6 @@
             window.open(url, '_blank', 'noopener,noreferrer');
         }
 
-        /* [V67 아이폰 PWA 출력 여백 원본 유지] */
         function triggerOfficialPrint() {
             const corpName = document.getElementById('targetName').value || "(주)__________________";
             const printData = window.currentPrintData;

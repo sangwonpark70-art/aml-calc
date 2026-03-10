@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aml-calc-v67';
+const CACHE_NAME = 'aml-calc-v70';
 const urlsToCache = [ './', './index.html', './manifest.json' ];
 
 self.addEventListener('install', event => {
