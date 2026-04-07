@@ -1,10 +1,10 @@
 {
-  "name": "실제소유자 판별기 V70",
+  "name": "실제소유자 판별기 V81",
   "short_name": "AML판별기",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4f46e5",
+  "theme_color": "#1e3a8a",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
