@@ -1,26 +1,33 @@
-const CACHE_NAME = 'aml-calc-v81';
-const urlsToCache = [ './', './index.html', './manifest.json' ];
+const CACHE_NAME = 'aml-calc-v84';
+const urlsToCache = [
+    './',
+    './index.html',
+    './manifest.json'
+];
 
+// 설치: 캐시 저장
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
-  self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    );
+    self.skipWaiting();
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
-});
-
+// 활성화: 구버전 캐시 삭제
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+    event.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+        )
+    );
+    self.clients.claim();
+});
+
+// 요청: 캐시 우선, 없으면 네트워크
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request).then(response =>
+            response || fetch(event.request)
+        )
+    );
 });

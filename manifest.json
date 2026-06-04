@@ -1,13 +1,20 @@
 {
-  "name": "실제소유자 판별기 V81",
+  "name": "실제소유자 판별기 V84",
   "short_name": "AML판별기",
+  "description": "법인 실제소유자(UBO) 자동 판별 도구 — 3단계 간접지분·순환출자 정규화 지원",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1e3a8a",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+      "src": "https://sangwonpark70-art.github.io/aml-calc/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://sangwonpark70-art.github.io/aml-calc/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
