@@ -1,0 +1,22 @@
+{
+  "name": "실제소유자 판별기 V85",
+  "short_name": "실소자V85",
+  "description": "법인 실제소유자(UBO) 자동 판별 도구 (사진인식) — 3단계 간접지분·순환출자 정규화 지원",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#065f46",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://sangwonpark70-art.github.io/aml-calc/v85-k3x9/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://sangwonpark70-art.github.io/aml-calc/v85-k3x9/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
