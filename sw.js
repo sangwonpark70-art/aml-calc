@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aml-calc-v84-20260708';
+const CACHE_NAME = 'aml-calc-v84-20260712';
 const urlsToCache = [
     './',
     './index.html',
