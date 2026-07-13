@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>법인 유형판별 · 필요서류 안내 (프로토타입 v0.11)</title>
+<title>법인 유형판별 · 필요서류 안내 (프로토타입 v0.14)</title>
 <style>
   :root{
     --navy:#1e3a8a; --navy-d:#1e40af; --line:#e2e8f0; --line2:#cbd5e1;
@@ -86,6 +86,12 @@
     #sheetArea{position:absolute;left:0;top:0;width:100%}
     .print-btn-row{display:none}
   }
+  body.print-result #sheetArea, body.print-result #sheetArea *{visibility:hidden}
+  @media print{
+    body.print-result #resultCard, body.print-result #resultCard *{visibility:visible}
+    body.print-result #resultCard{position:absolute;left:0;top:0;width:100%;border:none;box-shadow:none}
+    body.print-result #resultCard .r-print{display:none}
+  }
   /* 서류 가이드 (CSS 서류 모형) */
   .doc-mock{border:1px solid var(--line2);border-radius:8px;background:#fdfdfd;padding:18px;position:relative;font-size:11px;color:#555;margin-top:10px}
   .doc-mock .doc-title{text-align:center;font-size:15px;font-weight:700;color:#000;letter-spacing:4px;margin-bottom:12px}
@@ -94,8 +100,10 @@
   .hotspot{position:relative;border:2px solid var(--danger);border-radius:6px;padding:6px 8px;margin:8px 0;background:#fff5f5}
   .hotspot .tag{position:absolute;top:-10px;left:8px;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px}
   .guide-item{margin-bottom:18px}
-  .guide-item h4{font-size:13px;color:var(--navy);margin-bottom:6px}
-  .guide-item p{font-size:12px;color:var(--sub);margin-bottom:4px}
+  .guide-item h4{font-size:14px;color:var(--navy);margin-bottom:6px}
+  .guide-item p{font-size:13px;color:var(--sub);margin-bottom:4px}
+  .sec-intro{border-left:4px solid var(--navy);border-radius:0 12px 12px 0}
+  .sec-intro h2{font-size:15px}
   .chk{list-style:none;margin-top:6px}
   .chk li{font-size:12px;padding:4px 0;color:var(--body)}
   .chk li:before{content:"✔ ";color:var(--ok);font-weight:700}
@@ -108,6 +116,14 @@
   .result-card.tone-neutral{border-left-color:var(--mut)}
   .result-card .badge{font-size:16px;padding:7px 16px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
   .result-card .result-line{font-size:14px;margin-top:12px}
+  .r-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:2px}
+  .r-biz{font-size:12px;color:var(--sub)}
+  .r-biz b{color:var(--ink);letter-spacing:1px}
+  .type-tag{font-size:11px;font-weight:700;color:var(--mut);border:1px solid var(--line2);border-radius:5px;padding:2px 7px}
+  .r-action{font-size:16px;font-weight:700;color:var(--ink);margin:12px 0 2px;line-height:1.45}
+  .r-action .kw{color:var(--navy);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+  .r-owner{font-size:12px;color:var(--body);background:#f8fafc;border:1px solid var(--line);border-radius:6px;padding:8px 11px;margin-top:10px}
+  .r-owner b{color:var(--ink)}
   .proc-card{padding:0}
   .proc-card>summary{list-style:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;gap:8px;user-select:none}
   .proc-card>summary::-webkit-details-marker{display:none}
@@ -128,6 +144,8 @@
   .cf-row .bx{width:15px;height:15px;border:1.5px solid #94a3b8;border-radius:3px;flex-shrink:0;text-align:center;line-height:13px;font-size:11px;font-weight:900;color:#fff}
   .cf-row.pick{background:var(--ok-bg);font-weight:700;color:var(--ok)}
   .cf-row.pick .bx{border-color:var(--ok);background:var(--ok)}
+  .cf-row.cand{background:var(--accent-bg);color:var(--accent);font-weight:700}
+  .cf-row.cand .bx{border-color:var(--accent)}
   .cf-row.ban{background:var(--danger-bg);color:var(--danger)}
   .cf-row.ban .bx{border-color:var(--danger);color:var(--danger)}
   .cf-row .tag{margin-left:auto;font-size:11px;font-weight:700;white-space:nowrap}
@@ -139,13 +157,13 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar">⚠️ 프로토타입 — 상장사 DB는 실데이터(2740건, 2026-07-12 DART 기준) · 금융사·지자체·카지노는 더미</div>
+  <div class="topbar">⚠️ 프로토타입 · <b>실데이터</b> 상장사 2,740건·카지노·VASP 9건(DART) / <b>실제 판정로직</b> 상호금융·지방공기업(키워드) / <b>오프라인 더미</b> 국세청·금융위 상태조회(실사용=온라인 API)</div>
 
   <div id="zipWarn" style="display:none;background:#fef2f2;color:#991b1b;border-bottom:2px solid #dc2626;padding:10px 16px;font-size:13px;font-weight:700;text-align:center">⚠️ 압축을 <u>전체 풀기</u> 한 폴더에서 index.html을 여세요. 압축 프로그램에서 바로 열면 판별기(V84) 연결이 끊깁니다.<span onclick="this.parentNode.style.display=&quot;none&quot;" title="닫기" style="cursor:pointer;margin-left:16px;font-weight:900;padding:0 8px;border:1px solid #dc2626;border-radius:4px">✕</span></div>
   <header class="hd">
     <div>
       <h1>법인 유형판별 · 필요서류 안내</h1>
-      <div class="sub">사업자등록번호와 법인명만 입력하면 유형(Type 1~4)과 필요서류를 즉시 안내합니다 · v0.11</div>
+      <div class="sub">사업자등록번호와 법인명만 입력하면 유형(Type 1~4)과 필요서류를 즉시 안내합니다 · v0.14</div>
     </div>
     <a class="v84link" href="#" id="v84HeaderLink" target="_blank" rel="noopener" title="지분 계산이 필요할 때" style="background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.65);font-weight:700;font-size:13px">지분 계산 바로가기 (실소자판별기) →</a>
   </header>
@@ -200,10 +218,10 @@
 
   <!-- ========== 탭 2 : 주주명부 표준양식 ========== -->
   <div class="tabpane" id="pane1">
-    <div class="card" style="max-width:820px;margin:0 auto 14px">
+    <div class="card sec-intro" style="max-width:820px;margin:0 auto 14px">
       <h2>주주명부 표준양식</h2>
       <p style="font-size:13px;color:var(--sub)">별도 주주명부 양식이 없는 법인 고객에게 이 표준양식을 안내하세요. 핵심 항목이 모두 포함되어 있어 그대로 작성·날인하면 접수 가능합니다.</p>
-      <div class="print-btn-row"><button class="btn" onclick="window.print()">🖨 인쇄 / PDF 저장</button></div>
+      <div class="print-btn-row"><button class="btn" onclick="printSheet()">🖨 인쇄 / PDF 저장</button></div>
     </div>
     <div id="sheetArea">
       <div class="form-sheet">
@@ -225,9 +243,14 @@
           <tr><td>3</td><td></td><td></td><td></td><td></td><td></td></tr>
           <tr><td>4</td><td></td><td></td><td></td><td></td><td></td></tr>
           <tr><td>5</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>6</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>7</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>8</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>9</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>10</td><td></td><td></td><td></td><td></td><td></td></tr>
           <tr><td colspan="3" style="font-weight:700">합 계</td><td></td><td></td><td></td></tr>
         </table>
-        <p class="fs-note">※ 지분율 합계가 100%가 되도록 작성해 주세요. 주주가 5인을 초과하면 지분율 상위 순으로 이어서 기재해 주세요.</p>
+        <p class="fs-note">※ 지분율 합계가 100%가 되도록 작성해 주세요. 주주가 10인을 초과하면 지분율 상위 순으로 이어서 기재해 주세요.</p>
         <p class="fs-confirm">위 내용이 사실과 다름없음을 확인합니다.</p>
         <div class="fs-sign">
           <div class="row"><span>확 인 일 :</span><span class="val">20&nbsp;&nbsp;&nbsp;&nbsp;년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</span></div>
@@ -240,6 +263,10 @@
 
   <!-- ========== 탭 3 : 서류 확인 가이드 ========== -->
   <div class="tabpane" id="pane2">
+    <div class="card sec-intro" style="max-width:820px;margin:0 auto 14px">
+      <h2>서류 확인 가이드</h2>
+      <p style="font-size:13px;color:var(--sub)">고객이 가져온 서류를 접수 전 검토할 때, 각 서류에서 반드시 확인할 지점을 모형으로 안내합니다. 붉은 표시(확인 포인트)를 현장에서 그대로 대조하세요.</p>
+    </div>
     <div class="grid">
       <div>
         <div class="card guide-item">
@@ -497,20 +524,32 @@ function renderResult(r){
   rc.className='card result-card '+(toneMap[r.type]||'tone-neutral');
   let html='';
   if(r.manual) html += `<div class="noticebox" style="margin:0 0 12px">✋ <b>수동 선택 결과</b>입니다 — 실제 판별이 아닙니다. 가급적 사업자등록번호로 판별하세요.</div>`;
+  const OWNER = `<div class="r-owner">실제소유자 정보 기재: <b>성명(한글)·영문명·생년월일·국적(외국인 필수)·보유지분</b> — 확인서 실제소유자 정보란과 동일</div>`;
   if(r.type==='PERSONAL'){
-    html += `<span class="badge personal">개인사업자</span><p class="result-line">법인이 아니므로 실제소유자 확인서 작성이 불필요합니다.</p><p class="result-sub">대표자 본인이 실질 소유자입니다.</p>`;
+    html += `<div class="r-head"><span class="badge personal">개인사업자</span><span class="r-biz" id="rBiz"></span></div>
+      <p class="r-action">실제소유자 확인서 <span class="kw">작성 불필요</span></p>
+      <p class="result-sub">법인이 아니므로 대표자 본인이 실질 소유자입니다.</p>`;
   } else if(r.type==='EXEMPT'){
     if(r.mutual){
-      html += `<span class="badge exempt">확인 면제</span><p class="result-line">${r.basis} = 특금법상 금융회사등 → 실제소유자 확인 면제</p><p class="result-sub">근거: 특금법 제5조의2①1호나목, 시행령 제10조의5 (다른 금융회사등)</p>` + confirmGuide('EXEMPT') + docsHtml('상호금융') + `<div class="noticebox">단, <b>실제소유자 확인만</b> 면제입니다. 대표자(이사장) 확인·위험평가는 면제와 무관하게 별도 이행하세요(시행령 제10조의4 대표자 확인 / 위험평가 전 고객 필수). 고위험이면 EDD 추가.</div>`;
+      html += `<div class="r-head"><span class="badge exempt">확인 면제</span><span class="r-biz" id="rBiz"></span></div>
+        <p class="r-action">${r.basis} — 실제소유자 <span class="kw">확인 면제</span></p>
+        <p class="result-sub">근거: 특금법 제5조의2①1호나목, 시행령 제10조의5 (다른 금융회사등)</p>` + confirmGuide('EXEMPT') + docsHtml('상호금융') + `<div class="noticebox">단, <b>실제소유자 확인만</b> 면제입니다. 대표자(이사장) 확인·위험평가는 면제와 무관하게 별도 이행하세요(시행령 제10조의4 대표자 확인 / 위험평가 전 고객 필수). 고위험이면 EDD 추가.</div>`;
     } else if(r.localpub){
-      html += `<span class="badge exempt">확인 면제</span><p class="result-line">${r.basis} → 공공단체로서 실제소유자 확인 면제</p><p class="result-sub">근거: 특금법 시행령 제10조의5②(제8조의5) 다목 — 지방직영기업·지방공사·지방공단</p>` + confirmGuide('EXEMPT') + docsHtml('상장면제') + `<div class="noticebox">※ 지자체 <b>출자·출연기관</b>(재단·진흥원·의료원 등)은 라목상 <b>FIU원장 지정분만</b> 면제 — 명칭만으로 확정 불가, 개별 확인 필요.</div>`;
+      html += `<div class="r-head"><span class="badge exempt">확인 면제</span><span class="r-biz" id="rBiz"></span></div>
+        <p class="r-action">공공단체 — 실제소유자 <span class="kw">확인 면제</span></p>
+        <p class="result-sub">근거: 특금법 시행령 제10조의5②(제8조의5) 다목 — 지방직영기업·지방공사·지방공단</p>` + confirmGuide('EXEMPT') + docsHtml('상장면제') + `<div class="noticebox">※ 지자체 <b>출자·출연기관</b>(재단·진흥원·의료원 등)은 라목상 <b>FIU원장 지정분만</b> 면제 — 명칭만으로 확정 불가, 개별 확인 필요.</div>`;
     } else {
-      html += `<span class="badge exempt">확인 면제</span><p class="result-line">${r.basis} → 실제소유자 확인 생략 가능</p><p class="result-sub">단, 법인 신원확인(등기부등본)은 면제 없이 필수입니다.</p>` + confirmGuide('EXEMPT') + docsHtml('상장면제');
+      html += `<div class="r-head"><span class="badge exempt">확인 면제</span><span class="r-biz" id="rBiz"></span></div>
+        <p class="r-action">${r.basis} — 실제소유자 <span class="kw">확인 생략 가능</span></p>
+        <p class="result-sub">단, 법인 신원확인(등기부등본)은 면제 없이 필수입니다.</p>` + confirmGuide('EXEMPT') + docsHtml('상장면제');
     }
   } else if(r.type==='T4'){
-    html += `<span class="badge t4">Type 4</span><p class="result-line">비영리법인·단체 → 대표자 1인을 실제소유자로 지정</p><p class="result-sub">지분율 계산 없이 대표자 성명만 확인합니다.</p>` + confirmGuide('T4') + docsHtml('비영리');
+    html += `<div class="r-head"><span class="badge t4">비영리법인·단체</span><span class="type-tag">내부 Type 4</span><span class="r-biz" id="rBiz"></span></div>
+      <p class="r-action">확인서 <span class="kw">(3) 비영리법인·단체의 대표자</span> 지정</p>
+      <p class="result-sub">지분율 계산 없이 대표자 1인을 실제소유자로 지정합니다.</p>` + OWNER + confirmGuide('T4') + docsHtml('비영리');
   } else if(r.type==='영리일반'){
-    html += `<span class="badge t1">영리법인 (일반)</span><p class="result-line">지분 구조 확인이 필요합니다.</p>`;
+    html += `<div class="r-head"><span class="badge t1">영리법인 (일반)</span><span class="r-biz" id="rBiz"></span></div>
+      <p class="r-action"><span class="kw">지분 구조 확인</span>이 필요합니다.</p>` + OWNER;
     if(r.cvType==='casino') html += `<div class="noticebox">카지노 사업자 — 확인 면제 대상이 아닙니다. 일반 영리법인과 동일하게 지분(실제소유자) 확인이 필요합니다.</div>`;
     else if(r.cvType==='vasp') html += `<div class="noticebox">가상자산사업자(VASP) — 면제 대상 아님. 특금법 제5조의2①3호에 따라 <b>강화확인</b> 필요(신고수리확인서·실명확인 입출금계정·ISMS 인증). ★ 신고 여부는 <b>FIU 신고현황 원본 대조 필수</b> (목록 기준일 2025-12-19·수시변동, DART 미등재 소형 VASP는 이 목록에 없을 수 있음).</div>`;
     html += docsHtml('영리일반') + confirmGuide('PROFIT');
@@ -521,6 +560,32 @@ function renderResult(r){
     html += `<div class="noticebox">주주명부 양식이 없는 고객에게는 상단 <b>② 주주명부 표준양식</b> 탭의 양식을 안내하세요.</div>`;
   }
   rb.innerHTML = html;
+  const bizv = clean(document.getElementById('bizNo').value);
+  const rbiz = rb.querySelector('#rBiz');
+  if(rbiz && !r.manual && bizv.length===10){
+    rbiz.innerHTML = `사업자등록번호 <b>${bizv}</b>`;
+  }
+  if(!r.manual && r.type!=='PERSONAL'){
+    rb.insertAdjacentHTML('beforeend', `<div class="r-print" style="margin-top:14px;text-align:right"><button class="btn sec" onclick="printResult()" style="font-size:12px;height:32px;padding:0 14px">🖨 이 결과 인쇄 (현장 서류체크용)</button></div>`);
+  }
+}
+function printResult(){
+  const biz = clean(document.getElementById('bizNo').value);
+  const dt = new Date();
+  const ymd = `${dt.getFullYear()}${String(dt.getMonth()+1).padStart(2,'0')}${String(dt.getDate()).padStart(2,'0')}`;
+  const orig = document.title;
+  document.title = `실제소유자유형판별_결과_${biz||'미입력'}_${ymd}`;
+  document.body.classList.add('print-result');
+  window.print();
+  setTimeout(()=>{ document.body.classList.remove('print-result'); document.title = orig; }, 300);
+}
+function printSheet(){
+  const dt = new Date();
+  const ymd = `${dt.getFullYear()}${String(dt.getMonth()+1).padStart(2,'0')}${String(dt.getDate()).padStart(2,'0')}`;
+  const orig = document.title;
+  document.title = `주주명부_표준양식_${ymd}`;
+  window.print();
+  setTimeout(()=>{ document.title = orig; }, 300);
 }
 
 function docsHtml(key){
@@ -538,16 +603,16 @@ function docsHtml(key){
 
 // 실제소유자 확인서 — 체크 유형 미니 가이드 (2)-③/(3) 혼동 방지
 function confirmGuide(kind){
-  const row=(cls,no,txt,tag)=>`<div class="cf-row ${cls}"><span class="bx">${cls==='pick'?'✔':cls==='ban'?'✕':''}</span><span>${no} ${txt}</span>${tag?`<span class="tag">${tag}</span>`:''}</div>`;
+  const row=(cls,no,txt,tag)=>`<div class="cf-row ${cls}"><span class="bx">${cls==='ban'?'✕':''}</span><span>${no} ${txt}</span>${tag?`<span class="tag">${tag}</span>`:''}</div>`;
   if(kind==='T4') return `<div class="cf"><div class="cf-hd">📋 실제소유자 확인서 — 체크할 유형</div>`+
     row('','(1)','25% 이상 지분 자연인')+row('','(2)-①','최대 지분 자연인')+row('','(2)-②','사실상 지배하는 자')+
     row('ban','(2)-③','대표자','체크 금지 — 영리법인 전용')+
-    row('pick','(3)','비영리법인·단체의 대표자','✔ 여기 체크')+
+    row('cand','(3)','비영리법인·단체의 대표자','← 여기 체크')+
     `</div><div class="noticebox">⚠ (2)-③과 (3)은 둘 다 "대표자"지만 <b>(3)만 비영리 전용</b>입니다. (2)-③에 잘못 체크하면 직인 수정이 필요합니다. 전산 입력 시에도 동일 유형을 선택하세요.</div>`;
   if(kind==='PROFIT') return `<div class="cf"><div class="cf-hd">📋 실제소유자 확인서 — 지분 계산 후 셋 중 하나</div>`+
-    row('pick','(1)','25% 이상 지분 자연인','Type 1')+row('pick','(2)-①','최대 지분 자연인','Type 2')+row('pick','(2)-③','대표자 (1·2단계 확인 불가 시)','Type 3')+
+    row('cand','(1)','25% 이상 지분 자연인','Type 1')+row('cand','(2)-①','최대 지분 자연인','Type 2')+row('cand','(2)-③','대표자 (1·2단계 확인 불가 시)','Type 3')+
     row('ban','(3)','비영리법인·단체의 대표자','체크 금지 — 비영리 전용')+
-    `</div><div class="noticebox">⚠ 영리법인 대표자는 <b>(2)-③</b>입니다. (3)은 비영리 전용 — 혼동 최다 지점. 최종 유형은 실소자판별기의 지분 계산 결과로 확정하세요.</div>`;
+    `</div><div class="noticebox">⚠ 영리법인 대표자는 <b>(2)-③</b>입니다. (3)은 비영리 전용. 최종 유형은 실소자판별기의 지분 계산 결과로 확정하세요.</div>`;
   if(kind==='EXEMPT') return `<div class="noticebox" style="background:var(--ok-bg);color:var(--ok)">📋 실제소유자 확인서: <b>제출 생략(면제)</b> — 확인서 유형 체크 자체가 불필요합니다. 전산에는 면제 사유를 입력하세요.</div>`;
   return '';
 }
