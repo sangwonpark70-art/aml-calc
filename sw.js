@@ -2,7 +2,7 @@ const CACHE_NAME = 'aml-calc-v84-20260728';
 const urlsToCache = [
     './',
     './index.html',
-    './manifest.json'
+    './manifest.json', './icon-192.png', './icon-512.png'
 ];
 
 // 설치: 캐시 저장
@@ -17,7 +17,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+            Promise.all(keys.filter(k => k.startsWith('aml-calc-v84-') && k !== CACHE_NAME).map(k => caches.delete(k)))
         )
     );
     self.clients.claim();
