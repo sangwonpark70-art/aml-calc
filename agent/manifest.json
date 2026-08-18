@@ -1,0 +1,13 @@
+{
+  "name": "법인 유형판별 · 필요서류 안내",
+  "short_name": "유형판별",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c2d12",
+  "icons": [
+    { "src": "https://sangwonpark70-art.github.io/aml-calc/agent/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "https://sangwonpark70-art.github.io/aml-calc/agent/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
