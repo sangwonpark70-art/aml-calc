@@ -435,7 +435,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
     <div class="container">
         <div class="header">
-            <div class="title">🏢 실제소유자 판별기 V84 (개인검증용) <span class="ub-ver" title="이 파일의 판 · 계산기는 외부 데이터를 쓰지 않습니다(입력값 기준)">V84 · 2026-11-04판 · 외부 데이터 없음</span></div>
+            <div class="title">🏢 실제소유자 판별기 V84 (개인검증용) <span class="ub-ver" title="이 파일의 판 · 계산기는 외부 데이터를 쓰지 않습니다(입력값 기준)">V84 · 2026-11-17판 · 외부 데이터 없음</span></div>
             <div class="header-btns">
                 <button class="action-btn" onclick="toggleHistory()">📋 이력</button>
                 <button class="action-btn" onclick="exportJSON()" title="현재 입력 데이터를 JSON 파일로 저장 — 저장 자료는 이 기기에만 남습니다">💾 저장</button>
@@ -644,5 +644,61 @@ function closeChartModal(){
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChartModal();});
 /* ===== TYPEAGENT_HANDOFF_RECV ===== */;(function(){var p=new URLSearchParams(location.search);if(p.get('from')!=='typeagent')return;window.__typeagentHandoff=true;var corpNm=(p.get('corpNm')||'').trim(),bizNo=(p.get('bizNo')||'').trim();var apply=function(){var f=function(id,val){var el=document.getElementById(id);if(el&&val){el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}));}};f('targetName',corpNm);f('bizNumInput',bizNo);if(typeof checkNpName==='function')checkNpName();};/* initApp이 window 'load'에서 필드를 리셋하므로 load 이후 적용해야 값이 유지된다 */window.addEventListener('load',function(){setTimeout(apply,0);});})();
 </script>
+<style id="ubDockStyle">
+#ubDock{display:none}
+@media (max-width: 600px){
+  #ubDock.on{display:flex;align-items:center;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:7000;margin:0;border:0;border-top:2px solid #6366f1;
+    background:#eef2ff;color:#1e293b;padding:10px 12px calc(10px + env(safe-area-inset-bottom));font:inherit;font-size:13.5px;text-align:left;
+    box-shadow:0 -4px 14px rgba(15,23,42,.12);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #ubDock.on.hold{background:#fef2f2;border-top-color:#dc2626}
+  #ubDock .ud-t{font-weight:800;white-space:nowrap;flex:0 0 auto}
+  #ubDock.hold .ud-t{color:#b91c1c}
+  #ubDock .ud-w{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+  #ubDock .ud-c{flex:0 0 auto;font-size:12px;font-weight:700;color:#9a3412;background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:2px 6px}
+  #ubDock .ud-go{flex:0 0 auto;font-size:12px;font-weight:700;color:#4338ca;white-space:nowrap}
+  body.ub-dock-on{padding-bottom:60px}
+  body.ub-dock-on #guideBtn{bottom:64px !important}
+}
+@media print{#ubDock{display:none !important}}
+</style>
+<script id="ubDockScript">/* UX8 휴대폰 결과 요약 띠 — 판정 로직 무변경(요약 카드 글만 읽음) */(function(){
+  var mq = window.matchMedia ? window.matchMedia('(max-width: 600px)') : { matches: false };
+  var dock = null, raf = 0;
+  function T(el){ return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; }
+  function esc(v){ return String(v).replace(/[&<>"']/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
+  function inView(el){ if (!el) return false; var r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight) - 56; }
+  function hasData(){ try { if (typeof shareholders === 'undefined' || !shareholders || !shareholders.some) return true;
+    return shareholders.some(function(x){ return String((x && x.name) || '').trim() || Number(x && x.val) > 0; }); } catch (e) { return true; } }   // 빈 처음 화면엔 띠 없음
+  function upd(){ try { upd0(); } catch (e) {} }   // 띠는 보조 표시 — 어떤 경우에도 본 화면 동작을 막지 않음
+  function upd0(){
+    raf = 0; if (!dock || !document.body) return;
+    var s = document.getElementById('ubSummary'), t = s ? T(s.querySelector('.ub-sum-type')) : '';
+    var on = !!(mq.matches && t && s.offsetParent !== null && !inView(s) && hasData());
+    if (t) {
+      var who = T(s.querySelector('.ub-sum-who')) || T(s.querySelector('.ub-sum-msg'));
+      var m = T(s.querySelector('.ub-sum-chk')).match(/(\d+)\s*건/);
+      var h = '<span class="ud-t">' + esc(t) + '</span>' + (who ? '<span class="ud-w">' + esc(who) + '</span>' : '<span class="ud-w"></span>')
+        + (m ? '<span class="ud-c">⚠ ' + esc(m[1]) + '건</span>' : '') + '<span class="ud-go">결과 ↓</span>';
+      if (dock.innerHTML !== h) dock.innerHTML = h;
+      dock.classList.toggle('hold', s.classList.contains('ub-hold'));
+      dock.setAttribute('aria-label', '판별 결과 요약: ' + t + (who ? ' ' + who : '') + ' — 누르면 결과로 이동');
+    }
+    dock.classList.toggle('on', on);
+    document.body.classList.toggle('ub-dock-on', on);
+  }
+  function later(){ if (!raf) raf = setTimeout(upd, 60); }   // rAF 대신 setTimeout — 창을 닫으면 함께 정리됨(jsdom 시험 중단 방지)
+  function init(){
+    dock = document.createElement('button'); dock.type = 'button'; dock.id = 'ubDock';
+    dock.addEventListener('click', function(){ var s = document.getElementById('ubSummary') || document.getElementById('resultCard'); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    document.body.appendChild(dock);
+    var rc = document.getElementById('resultCard');
+    document.addEventListener('input', later, true);   // 이름·지분 입력 즉시 반영
+    if (rc && window.MutationObserver) new MutationObserver(later).observe(rc, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class', 'style'] });
+    window.addEventListener('scroll', later, { passive: true }); window.addEventListener('resize', later);
+    if (mq.addEventListener) mq.addEventListener('change', later); else if (mq.addListener) mq.addListener(later);
+    later();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();</script>
 </body>
 </html>
